@@ -13,17 +13,18 @@ Source materials for an ALCF talk evaluating my use of Claude Code on two real p
 | [`build_deck.py`](./build_deck.py) | `python-pptx` generator — re-run to rebuild from edits |
 | [`deck_outline.md`](./deck_outline.md) | Slide-by-slide outline plus the numbers used |
 | [`session_stats.json`](./session_stats.json) | Mined metrics from the local Claude Code session JSONLs |
+| [`ALCF Presentation Template.pptx`](./ALCF%20Presentation%20Template.pptx) | The ALCF template — committed so the build is self-contained |
 
 ## Rebuild
 
 ```bash
-pip install "markitdown[pptx]" python-pptx pillow
-# Source template lives outside this repo (ALCF Presentation Template.pptx).
-# Point /tmp/ALCF Presentation Template.pptx at it, then:
+pip install python-pptx
 python3 build_deck.py
 # Optional: render to PDF for QA
 soffice --headless --convert-to pdf ai-agent-coding-alcf.pptx
 ```
+
+No external paths: `build_deck.py` resolves the template relative to its own location.
 
 ## Scope and provenance
 
@@ -31,7 +32,7 @@ soffice --headless --convert-to pdf ai-agent-coding-alcf.pptx
   - **CCS** (`argonne-lcf/CCS`) — C99 autotuning configuration-space library; I wrote and maintain it. 3 sessions, 530 user prompts, 96 PRs merged in 6 weeks.
   - **rust-gpu + claspr** — OpenCL Kernel execution model added to `Rust-GPU/rust-gpu` (PR #3 on the fork, +24,540 / −595 across 761 files) plus the new `claspr` single-source OpenCL host layer (~81K LOC). 4 sessions, 964 user prompts.
 - Metrics in `session_stats.json` are mined from the **locally-available** session JSONLs only (the two largest rust-gpu sessions). Totals across all 7 sessions are larger; numbers in the deck are conservative.
-- The deck is built from the official ALCF PowerPoint template, which is **not redistributed here**.
+- The deck is built from the official ALCF PowerPoint template, which is **committed to this repo** so the build is self-contained.
 
 ## Authoring notes
 

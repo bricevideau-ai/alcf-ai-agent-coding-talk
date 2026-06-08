@@ -17,10 +17,10 @@ If a user prompt anywhere in the surviving session history says "the linux lapto
 
 ## How to rebuild
 
-The template (`ALCF Presentation Template.pptx`) is **not in the repo** — put it at `/tmp/ALCF Presentation Template.pptx` (or edit `TEMPLATE` in `build_deck.py`).
+The template (`ALCF Presentation Template.pptx`) is committed at the repo root. `build_deck.py` resolves paths relative to its own location, so the build is self-contained — no external setup.
 
 ```bash
-pip install --break-system-packages "markitdown[pptx]" python-pptx pillow
+pip install --break-system-packages python-pptx
 python3 build_deck.py
 soffice --headless --convert-to pdf ai-agent-coding-alcf.pptx
 pdftoppm -jpeg -r 90 ai-agent-coding-alcf.pdf slide   # per-slide JPGs for QA
@@ -114,6 +114,6 @@ If you re-mine on the other laptop, regenerate `session_stats.json` first, then 
 ## Things I deliberately did not do
 
 - Did not add the source `.jpg` slide renders — they're ephemeral, regenerate from the pptx.
-- Did not commit the ALCF template — it's not ours to redistribute.
+- (Originally I did not commit the ALCF template. Brice corrected that — it's now in the repo so the build is self-contained.)
 - Did not write a Makefile — the four-line workflow at the top is short enough.
 - Did not propagate the QA pass into the build script as automated checks; visual QA via subagent is sufficient at this scale.

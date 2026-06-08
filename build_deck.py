@@ -9,13 +9,15 @@ Key fixes vs v1:
 - Quoted text cleaned (typos fixed only when clearly a typo).
 """
 import copy
+import os
 from pptx import Presentation
 from pptx.util import Inches, Pt
 from pptx.dml.color import RGBColor
 from pptx.enum.text import PP_ALIGN
 
-TEMPLATE = "/tmp/ALCF Presentation Template.pptx"
-OUT = "/tmp/ai-agent-coding-alcf.pptx"
+HERE = os.path.dirname(os.path.abspath(__file__))
+TEMPLATE = os.path.join(HERE, "ALCF Presentation Template.pptx")
+OUT = os.path.join(HERE, "ai-agent-coding-alcf.pptx")
 
 # ============================================================================
 # Helpers
@@ -156,13 +158,13 @@ set_block(get_ph(s, 19), "What this talk is not",
 # --- 4. Setup --------------------------------------------------------------
 s = add(6)
 set_text(get_ph(s, 0), "Setup: how Claude Code was used")
-set_text(get_ph(s, 13), "Same tool, two laptops, one persona, six months")
+set_text(get_ph(s, 13), "Same tool, two laptops, one persona")
 set_text(get_ph(s, 16), "Environment")
 set_bullets(get_ph(s, 14), [
-    "Intel macOS + Ubuntu Arm laptops",
+    "Two Ubuntu laptops: native Intel + Arm Mac (Ubuntu env)",
     "Claude Code CLI (Opus 4.x / Sonnet 4.x)",
     "Local toolchains: autotools, cargo, pocl, rusticl",
-    "`gh` CLI for GitHub PRs and CI",
+    "`gh` CLI for GitHub PRs, CI (incl. macOS runners)",
 ])
 set_text(get_ph(s, 17), "Persona and isolation")
 set_bullets(get_ph(s, 15), [
@@ -356,7 +358,7 @@ set_bullets(get_ph(s, 14), [
     "Started from upstream issue #74 — reproduce, then design",
     "Two long-lived branches: opencl-kernel-support (stable) and -v2 (dev)",
     ("Samples repo tracks stable; promotion is explicit, not automatic", 1),
-    "Cross-laptop sessions handed off explicitly between macOS and Ubuntu Arm",
+    "Cross-laptop hand-offs between Intel-Ubuntu and Arm-Mac sessions",
     "Lint-before-push enforced after one CI failure (memorized)",
     "Rebase after merge enforced after the agent forgot once (memorized)",
     "claspr CI runs on rusticl/llvmpipe so reviewers can rerun",
