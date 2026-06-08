@@ -161,8 +161,8 @@ def add(layout_idx):
 
 # --- 1. Title -------------------------------------------------------------
 s = add(0)
-set_text(get_ph(s, 0), "From Directing to Dialogue: Ten Weeks of AI Agent Coding for Performance Engineering")
-set_text(get_ph(s, 1), "Two ALCF-adjacent projects · 7 sessions · ~1,500 prompts")
+set_text(get_ph(s, 0), "From Directing to Dialogue: Fifteen Weeks of AI Agent Coding for Performance Engineering")
+set_text(get_ph(s, 1), "Two projects · 7 sessions · ~1,500 prompts")
 set_text(get_ph(s, 17), "Brice Videau")
 set_text(get_ph(s, 18), "Argonne Leadership Computing Facility\nArgonne National Laboratory\nJune 2026")
 # Remove the empty image placeholder and unused presenter slots
@@ -253,17 +253,17 @@ s = add(3)  # Title, Subtitle and Bullets — gives a tall body for the timeline
 set_text(get_ph(s, 0), "Session chronology")
 set_text(get_ph(s, 13), "7 sessions over 15 weeks; an 11-day stretch in parallel")
 set_code(get_ph(s, 14),
-"""        Feb 25   Mar 09   Mar 27   Apr 07   Apr 24   May 04   May 13   Jun 08
-CCS  s1 [========]
-CCS  s2          [============]
-CCS  s3                   [=========]
-rgpu s1                   [=========]    ← parallel with CCS s3 (Mar 27 → Apr 7)
-rgpu s2                             [=============]
-rgpu s3                                                   [=======]
-rgpu s4                                                            [========================]
+"""                  Feb 25   Mar 09   Mar 27   Apr 07   Apr 24   May 04   May 13   Jun 08
+CCS  s1  3f086a62 [========]
+CCS  s2  add0d69f          [============]
+CCS  s3  ca6a2dde                   [=========]
+rgpu s1  dd63080c                   [=========]    ← parallel with CCS s3 (Mar 27 → Apr 7)
+rgpu s2  e493c2fd                             [=============]
+rgpu s3  a910ecaa                                                   [=======]   *
+rgpu s4  11e6e374                                                            [========================]   *
 
-  [ ] = active session   ← arrow notes the only multi-day cross-project overlap
-""", size=11)
+  [ ] = active session     * = full JSONL still on disk (others: only history.jsonl prompts survive 30-day eviction)
+""", size=10)
 
 # --- 7. Section break: CCS ------------------------------------------------
 s = add(2)
