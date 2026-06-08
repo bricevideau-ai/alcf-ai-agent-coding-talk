@@ -1,6 +1,8 @@
 # Repo orientation for Claude — alcf-ai-agent-coding-talk
 
-This is a 32-slide ALCF talk evaluating Brice's use of Claude Code on two projects: CCS and rust-gpu + claspr. The deck was authored on the Linux laptop. It will be reviewed and finalized on the **other laptop** (Intel macOS), where you may be the next agent picking it up. Read this before editing.
+This is a 32-slide ALCF talk evaluating Brice's use of Claude Code on two projects: CCS and rust-gpu + claspr. The deck was authored on the **Arm Mac laptop** (Ubuntu environment on macOS host — `aarch64`, hostname `bvideau-VMware20-1`). It will be reviewed and finalized on the **other laptop**, which is a **native Intel Ubuntu install** — where you, the next agent, are reading this. Read this before editing.
+
+If a user prompt anywhere in the surviving session history says "the linux laptop", they mean the native-Intel-Ubuntu laptop (i.e. you). If they say "the mac" or "the other laptop", they mean the Arm one where this deck was authored.
 
 ## Files
 
@@ -85,7 +87,7 @@ pdftoppm -jpeg -r 90 ai-agent-coding-alcf.pdf slide
 # (the pptx skill at ~/.claude/skills/pptx/SKILL.md has the canonical QA prompt).
 ```
 
-LibreOffice renders close to PowerPoint but not identical. For final review, open the pptx in PowerPoint on macOS and skim. The known small differences:
+LibreOffice renders close to PowerPoint but not identical. Final PowerPoint review will happen back on the Arm Mac (host macOS has the real Office). Don't worry about font substitution here — just make sure structurally nothing overflows.
 - LibreOffice doesn't have the exact ALCF title font (substitutes). PowerPoint will use the real one.
 - Multi-line title behavior in Layout 3/5/6 may differ by ~1 px. Watch the rust-gpu interaction title (#18) and Implications (#30) which both wrap to 2 lines.
 
