@@ -1,119 +1,143 @@
 {
-  "per_session": {
+  "schema_version": 2,
+  "generated_at": "2026-06-08",
+  "generated_on_laptop": "arm-mac-ubuntu",
+  "merge_instructions": "This file aggregates Claude Code session metrics for the talk. When the native-Intel-Ubuntu laptop runs, it should: (1) re-mine its OWN surviving session JSONLs the same way (see build_deck.py or the Python snippets in CLAUDE.md), (2) for any session sid that appears in BOTH this file and the other laptop with available=true, prefer the other laptop's data (it's a strict superset if both retain the same session \u2014 JSONLs are append-only). For sessions where one laptop has available=true and the other has available=false, keep the available data. Then regenerate the project totals + the deck slides 24/25/26/27 numbers.",
+  "by_session": {
     "3f086a62-e6e8-4f09-bced-e0d5cd469b0d": {
       "project": "ccs",
-      "available": false,
-      "path": null,
+      "session_id": "3f086a62-e6e8-4f09-bced-e0d5cd469b0d",
+      "available_locally": false,
+      "first_date": "2026-02-25",
+      "last_date": "2026-03-09",
+      "first_ts_utc": "2026-02-25 17:12",
+      "last_ts_utc": "2026-03-09 12:57",
+      "duration_hours_wallclock": 282.7,
+      "prompt_count_from_history": 119,
       "user_msgs": 0,
       "assistant_msgs": 0,
       "input_tokens": 0,
       "output_tokens": 0,
-      "cache_creation": 0,
-      "cache_read": 0,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 0,
       "subagent_calls": 0,
-      "first_ts": null,
-      "last_ts": null,
-      "top_tools": {},
       "subagent_types": {},
+      "tool_uses_top": {},
       "slash_commands": {},
       "skills_used": {},
-      "model_uses": {},
-      "est_cost_opus_usd": 0.0
+      "model_uses": {}
     },
     "add0d69f-2382-4a2b-8b1f-3a04f77798bc": {
       "project": "ccs",
-      "available": false,
-      "path": null,
+      "session_id": "add0d69f-2382-4a2b-8b1f-3a04f77798bc",
+      "available_locally": false,
+      "first_date": "2026-03-09",
+      "last_date": "2026-03-27",
+      "first_ts_utc": "2026-03-09 13:54",
+      "last_ts_utc": "2026-03-27 10:39",
+      "duration_hours_wallclock": 428.7,
+      "prompt_count_from_history": 161,
       "user_msgs": 0,
       "assistant_msgs": 0,
       "input_tokens": 0,
       "output_tokens": 0,
-      "cache_creation": 0,
-      "cache_read": 0,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 0,
       "subagent_calls": 0,
-      "first_ts": null,
-      "last_ts": null,
-      "top_tools": {},
       "subagent_types": {},
+      "tool_uses_top": {},
       "slash_commands": {},
       "skills_used": {},
-      "model_uses": {},
-      "est_cost_opus_usd": 0.0
+      "model_uses": {}
     },
     "ca6a2dde-0561-4758-944d-585a5515040d": {
       "project": "ccs",
-      "available": false,
-      "path": null,
+      "session_id": "ca6a2dde-0561-4758-944d-585a5515040d",
+      "available_locally": false,
+      "first_date": "2026-03-27",
+      "last_date": "2026-04-07",
+      "first_ts_utc": "2026-03-27 10:42",
+      "last_ts_utc": "2026-04-07 11:57",
+      "duration_hours_wallclock": 265.3,
+      "prompt_count_from_history": 250,
       "user_msgs": 0,
       "assistant_msgs": 0,
       "input_tokens": 0,
       "output_tokens": 0,
-      "cache_creation": 0,
-      "cache_read": 0,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 0,
       "subagent_calls": 0,
-      "first_ts": null,
-      "last_ts": null,
-      "top_tools": {},
       "subagent_types": {},
+      "tool_uses_top": {},
       "slash_commands": {},
       "skills_used": {},
-      "model_uses": {},
-      "est_cost_opus_usd": 0.0
+      "model_uses": {}
     },
     "dd63080c-8cbd-4f75-b01b-a8491e84741a": {
       "project": "rust-gpu",
-      "available": false,
-      "path": null,
+      "session_id": "dd63080c-8cbd-4f75-b01b-a8491e84741a",
+      "available_locally": false,
+      "first_date": "2026-03-27",
+      "last_date": "2026-04-07",
+      "first_ts_utc": "2026-03-27 14:21",
+      "last_ts_utc": "2026-04-07 14:25",
+      "duration_hours_wallclock": 264.1,
+      "prompt_count_from_history": 23,
       "user_msgs": 0,
       "assistant_msgs": 0,
       "input_tokens": 0,
       "output_tokens": 0,
-      "cache_creation": 0,
-      "cache_read": 0,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 0,
       "subagent_calls": 0,
-      "first_ts": null,
-      "last_ts": null,
-      "top_tools": {},
       "subagent_types": {},
+      "tool_uses_top": {},
       "slash_commands": {},
       "skills_used": {},
-      "model_uses": {},
-      "est_cost_opus_usd": 0.0
+      "model_uses": {}
     },
     "e493c2fd-b710-481e-b8e0-2ce070f80311": {
       "project": "rust-gpu",
-      "available": false,
-      "path": null,
+      "session_id": "e493c2fd-b710-481e-b8e0-2ce070f80311",
+      "available_locally": false,
+      "first_date": "2026-04-07",
+      "last_date": "2026-04-24",
+      "first_ts_utc": "2026-04-07 14:25",
+      "last_ts_utc": "2026-04-24 20:58",
+      "duration_hours_wallclock": 414.5,
+      "prompt_count_from_history": 234,
       "user_msgs": 0,
       "assistant_msgs": 0,
       "input_tokens": 0,
       "output_tokens": 0,
-      "cache_creation": 0,
-      "cache_read": 0,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 0,
       "subagent_calls": 0,
-      "first_ts": null,
-      "last_ts": null,
-      "top_tools": {},
       "subagent_types": {},
+      "tool_uses_top": {},
       "slash_commands": {},
       "skills_used": {},
-      "model_uses": {},
-      "est_cost_opus_usd": 0.0
+      "model_uses": {}
     },
     "a910ecaa-c981-40a6-9c37-62be9c7688c4": {
       "project": "rust-gpu",
-      "available": true,
-      "path": "/home/claudecode/.claude/projects/-home-claudecode-projects/a910ecaa-c981-40a6-9c37-62be9c7688c4.jsonl",
+      "session_id": "a910ecaa-c981-40a6-9c37-62be9c7688c4",
+      "available_locally": true,
+      "first_date": "2026-05-04",
+      "last_date": "2026-05-13",
+      "first_ts_utc": "2026-05-04 10:09",
+      "last_ts_utc": "2026-05-13 10:39",
+      "duration_hours_wallclock": 216.5,
+      "prompt_count_from_history": 87,
       "user_msgs": 209,
       "assistant_msgs": 1747,
       "input_tokens": 28309,
       "output_tokens": 1742283,
-      "cache_creation": 17500018,
-      "cache_read": 767510551,
+      "cache_creation_tokens": 17500018,
+      "cache_read_tokens": 767510551,
       "subagent_calls": 0,
-      "first_ts": "2026-05-04T15:09:57.251Z",
-      "last_ts": "2026-05-13T15:42:44.927Z",
-      "top_tools": {
+      "subagent_types": {},
+      "tool_uses_top": {
         "Bash": 640,
         "Edit": 71,
         "Read": 52,
@@ -123,30 +147,41 @@
         "TaskUpdate": 22,
         "TaskCreate": 12,
         "AskUserQuestion": 4,
-        "TaskOutput": 1
+        "TaskOutput": 1,
+        "ScheduleWakeup": 1,
+        "CronList": 1,
+        "CronDelete": 1,
+        "WebFetch": 1
       },
-      "subagent_types": {},
       "slash_commands": {},
       "skills_used": {},
       "model_uses": {
         "claude-opus-4-7": 1747
-      },
-      "est_cost_opus_usd": 1610.49
+      }
     },
     "11e6e374-f5e8-4c37-8bd1-2c629b4b6d0b": {
       "project": "rust-gpu",
-      "available": true,
-      "path": "/home/claudecode/.claude/projects/-home-claudecode-projects/11e6e374-f5e8-4c37-8bd1-2c629b4b6d0b.jsonl",
+      "session_id": "11e6e374-f5e8-4c37-8bd1-2c629b4b6d0b",
+      "available_locally": true,
+      "first_date": "2026-05-13",
+      "last_date": "2026-06-08",
+      "first_ts_utc": "2026-05-13 11:19",
+      "last_ts_utc": "2026-06-08 16:31",
+      "duration_hours_wallclock": 629.2,
+      "prompt_count_from_history": 620,
       "user_msgs": 682,
       "assistant_msgs": 12222,
       "input_tokens": 245405,
       "output_tokens": 13759783,
-      "cache_creation": 236240832,
-      "cache_read": 6408282901,
+      "cache_creation_tokens": 236240832,
+      "cache_read_tokens": 6408282901,
       "subagent_calls": 24,
-      "first_ts": "2026-05-13T16:19:19.381Z",
-      "last_ts": "2026-06-08T21:52:40.333Z",
-      "top_tools": {
+      "subagent_types": {
+        "general-purpose": 7,
+        "Explore": 16,
+        "Plan": 1
+      },
+      "tool_uses_top": {
         "Bash": 3791,
         "Edit": 1687,
         "Read": 831,
@@ -156,12 +191,12 @@
         "AskUserQuestion": 57,
         "TaskOutput": 45,
         "TaskStop": 27,
-        "Agent": 24
-      },
-      "subagent_types": {
-        "general-purpose": 7,
-        "Explore": 16,
-        "Plan": 1
+        "Agent": 24,
+        "WebFetch": 22,
+        "ExitPlanMode": 18,
+        "Monitor": 14,
+        "EnterPlanMode": 11,
+        "TaskList": 11
       },
       "slash_commands": {
         "//": 1
@@ -170,35 +205,44 @@
       "model_uses": {
         "claude-opus-4-7": 12220,
         "<synthetic>": 2
-      },
-      "est_cost_opus_usd": 15077.6
+      }
     }
   },
-  "per_project": {
+  "by_project": {
     "ccs": {
-      "user_msgs": 0,
-      "assistant_msgs": 0,
+      "first_date": "2026-02-25",
+      "last_date": "2026-04-07",
+      "sessions_total": 3,
+      "sessions_available_locally": 0,
+      "prompt_count_from_history": 530,
+      "user_msgs_from_jsonls": 0,
+      "assistant_msgs_from_jsonls": 0,
       "input_tokens": 0,
       "output_tokens": 0,
-      "cache_creation": 0,
-      "cache_read": 0,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 0,
       "subagent_calls": 0,
-      "tool_uses": {},
-      "slash_commands": {},
+      "tool_uses_top": {},
       "subagent_types": {},
-      "skills_used": {},
       "model_uses": {},
-      "est_cost_opus_usd": 0.0
+      "slash_commands": {},
+      "skills_used": {},
+      "est_cost_opus_pricing_usd": 0.0
     },
     "rust-gpu": {
-      "user_msgs": 891,
-      "assistant_msgs": 13969,
+      "first_date": "2026-03-27",
+      "last_date": "2026-06-08",
+      "sessions_total": 4,
+      "sessions_available_locally": 2,
+      "prompt_count_from_history": 964,
+      "user_msgs_from_jsonls": 891,
+      "assistant_msgs_from_jsonls": 13969,
       "input_tokens": 273714,
       "output_tokens": 15502066,
-      "cache_creation": 253740850,
-      "cache_read": 7175793452,
+      "cache_creation_tokens": 253740850,
+      "cache_read_tokens": 7175793452,
       "subagent_calls": 24,
-      "tool_uses": {
+      "tool_uses_top": {
         "Bash": 4431,
         "Edit": 1758,
         "Read": 883,
@@ -215,21 +259,93 @@
         "EnterPlanMode": 11,
         "TaskList": 11
       },
-      "slash_commands": {
-        "//": 1
-      },
       "subagent_types": {
         "general-purpose": 7,
         "Explore": 16,
         "Plan": 1
       },
-      "skills_used": {},
       "model_uses": {
         "claude-opus-4-7": 13967,
         "<synthetic>": 2
       },
-      "est_cost_opus_usd": 16688.09
+      "slash_commands": {
+        "//": 1
+      },
+      "skills_used": {},
+      "est_cost_opus_pricing_usd": 16688.09
     }
   },
-  "totals": {}
+  "session_chronology": [
+    {
+      "first_date": "2026-02-25",
+      "last_date": "2026-03-09",
+      "project": "ccs",
+      "session_id": "3f086a62-e6e8-4f09-bced-e0d5cd469b0d",
+      "short_id": "3f086a62",
+      "available_locally": false,
+      "duration_hours": 282.7,
+      "prompt_count_from_history": 119
+    },
+    {
+      "first_date": "2026-03-09",
+      "last_date": "2026-03-27",
+      "project": "ccs",
+      "session_id": "add0d69f-2382-4a2b-8b1f-3a04f77798bc",
+      "short_id": "add0d69f",
+      "available_locally": false,
+      "duration_hours": 428.7,
+      "prompt_count_from_history": 161
+    },
+    {
+      "first_date": "2026-03-27",
+      "last_date": "2026-04-07",
+      "project": "ccs",
+      "session_id": "ca6a2dde-0561-4758-944d-585a5515040d",
+      "short_id": "ca6a2dde",
+      "available_locally": false,
+      "duration_hours": 265.3,
+      "prompt_count_from_history": 250
+    },
+    {
+      "first_date": "2026-03-27",
+      "last_date": "2026-04-07",
+      "project": "rust-gpu",
+      "session_id": "dd63080c-8cbd-4f75-b01b-a8491e84741a",
+      "short_id": "dd63080c",
+      "available_locally": false,
+      "duration_hours": 264.1,
+      "prompt_count_from_history": 23
+    },
+    {
+      "first_date": "2026-04-07",
+      "last_date": "2026-04-24",
+      "project": "rust-gpu",
+      "session_id": "e493c2fd-b710-481e-b8e0-2ce070f80311",
+      "short_id": "e493c2fd",
+      "available_locally": false,
+      "duration_hours": 414.5,
+      "prompt_count_from_history": 234
+    },
+    {
+      "first_date": "2026-05-04",
+      "last_date": "2026-05-13",
+      "project": "rust-gpu",
+      "session_id": "a910ecaa-c981-40a6-9c37-62be9c7688c4",
+      "short_id": "a910ecaa",
+      "available_locally": true,
+      "duration_hours": 216.5,
+      "prompt_count_from_history": 87
+    },
+    {
+      "first_date": "2026-05-13",
+      "last_date": "2026-06-08",
+      "project": "rust-gpu",
+      "session_id": "11e6e374-f5e8-4c37-8bd1-2c629b4b6d0b",
+      "short_id": "11e6e374",
+      "available_locally": true,
+      "duration_hours": 629.2,
+      "prompt_count_from_history": 620
+    }
+  ],
+  "parallelism_note": "CCS session ca6a2dde (Mar 27 \u2192 Apr 7) and rust-gpu session dd63080c (Mar 27 \u2192 Apr 7) ran in parallel \u2014 same days, different sessions. Sessions are per-project, never cross-project."
 }

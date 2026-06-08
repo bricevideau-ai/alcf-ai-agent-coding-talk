@@ -32,14 +32,16 @@ After editing, `git add ai-agent-coding-alcf.pptx ai-agent-coding-alcf.pdf build
 
 **Locked in (do not change without asking):**
 - Title: *From Directing to Dialogue: Ten Weeks of AI Agent Coding for Performance Engineering*. Subtitle: *Two ALCF-adjacent projects · 7 sessions · ~1,500 prompts*. The "directing → dialogue" framing is the thesis the rest of the deck builds on; CCS slides set up "directing", rust-gpu slides set up "dialogue".
-- Slide order (Title · Agenda · Why · Setup · Side-by-side · §CCS×6 · §rust-gpu/claspr×8 · §Cross-cutting×8 · Implications · Recommendations · Closing). Rearranging requires updating the agenda slide (#2) and §-break slides.
-- ALCF template layouts only. No custom layouts, no images injected. The template's master controls fonts/colors; we do not override them.
-- 32 slides total. Was sized for a 30-minute talk at ~1 slide/min.
+- Slide order (Title · Agenda · Why · Setup · Side-by-side · Chronology · §CCS×7 · §rust-gpu/claspr×9 · §Cross-cutting×9 · Implications · Recommendations · Closing). Each §-block includes a "what user code looks like" showcase slide. Slide 6 is the session-chronology text-timeline that surfaces the one 11-day cross-project overlap (CCS s3 + rust-gpu s1, Mar 27 → Apr 7). Rearranging requires updating the agenda slide (#2) and §-break slides.
+- ALCF template layouts only. No custom layouts, no images injected. The template's master controls fonts/colors; we do not override them — except inside the `set_block` and `set_code` helpers (see *Systemic QA issues* below).
+- 36 slides total. Sized for ~30–35 min of presenting. Slot is up to an hour including Q&A and Brice plans to add his own slides too — so don't pad this deck further; trim if you want to grow elsewhere.
 
 **Open for the other laptop to enrich:**
-- §CCS slides (#6–12). Built from the CCS repo + the user prompts surviving in `~/.claude/history.jsonl` only — the full session JSONLs were already evicted by Claude Code's 30-day session retention before this deck was built (see *Data availability* below). If the other laptop has surviving artifacts (e.g. local notes, screenshots, anything else), those are net-new and worth adding.
-- Slides #22–24 (tool-call distribution / sub-agent adoption / token economics): currently aggregated from **only the two locally-surviving rust-gpu sessions**. If the other laptop has additional surviving sessions (within its own 30-day window), re-mine and recompute. The current numbers under-count.
-- Quotes on slides #10 and #18 are paraphrased lightly from real user prompts; verbatim alternatives are fine.
+- §CCS slides (#7–14). Built from the CCS repo + the user prompts surviving in `~/.claude/history.jsonl` only — the full session JSONLs were already evicted by Claude Code's 30-day session retention before this deck was built (see *Data availability* below). If the other laptop has surviving artifacts (e.g. local notes, screenshots, anything else), those are net-new and worth adding.
+- Slides #25–28 (tool-call distribution / sub-agent adoption / model progression / token economics): currently aggregated from **only the two locally-surviving rust-gpu sessions** (a910ecaa, 11e6e374). If the other laptop has additional surviving session JSONLs, re-mine via the script-style code at the bottom of this file and *merge* into `session_stats.json` (see its `merge_instructions` field for the rules), then update the slide numbers in build_deck.py.
+- Quotes on slides #12 and #21 are paraphrased lightly from real user prompts; verbatim alternatives are fine.
+- Code showcases (#8 CCS, #16 claspr): trimmed examples; longer or different illustrative snippets are fine if they fit at 9pt Consolas in the left column.
+- Chronology slide (#6) is text-based monospace ASCII. If the other-laptop session list (within its 30-day window) reveals any I missed, add a row and update the parallelism caption.
 
 ## Critical context: data availability
 
@@ -66,13 +68,15 @@ What survives for those lost sessions:
 
 The first build broke in predictable ways. The current `build_deck.py` has fixes in place; if you re-edit, keep them:
 
-1. **4-block "big idea" layout (Layout 9)**. The placeholder default is 32pt bold white with `<a:noAutofit/>`. Putting `"Title\nbody"` as one paragraph blew out the box. Use the `set_block(ph, header, body)` helper, which writes the header at level-0 default (inherits 32pt bold) plus a second paragraph with `Pt(14)` and `RGBColor(0xFF, 0xFF, 0xFF)` forced (color inheritance is unreliable across renderers). Keep block bodies to ~25 words max; keep block headers to one line (two-line headers eat body height and trigger clipping at the box bottom — caught on slides 3 and 10 before fixing).
+1. **4-block "big idea" layout (Layout 9)**. The placeholder default is 32pt bold white with `<a:noAutofit/>`. Putting `"Title\nbody"` as one paragraph blew out the box. Use the `set_block(ph, header, body)` helper, which writes the header at level-0 default (inherits 32pt bold) plus a second paragraph with `Pt(14)` and `RGBColor(0xFF, 0xFF, 0xFF)` forced (color inheritance is unreliable across renderers). Keep block bodies to ~25 words max; keep block headers to one line (two-line headers eat body height and trigger clipping at the box bottom — caught on the original slides 3 and 11 before fixing).
 2. **Subtitle placeholder (idx=13)** is 26pt bold accent-2 color, 0.64" tall, `noAutofit`. Anything wrapping to two lines collides with the body below or the title above. **Cap subtitles at ~80 chars / single line.**
 3. **Bullet body (idx=14)** ends at y≈6.86"; the master's footer starts soon after. **Cap content lists so the rendered text doesn't approach the footer**. Trim 1–2 bullets if a slide gets close.
 4. **Title slide picture placeholder (idx=10)** has a "click to insert image" prompt that renders as a gray box if left empty. The current code removes it explicitly along with unused presenter slots (idx 19/20/21/22). If you ever re-use Layout 0, do the same.
 5. **Typo audit**: real user prompts get cleaned (e.g. `"Allright"` → `"Alright"`). If a typo is the point of the quote, mark it `[sic]`.
 
-The `build_deck.py` helpers (`set_text`, `set_block`, `set_bullets`, `get_ph`, `remove_placeholder`) encode these fixes. Use them, don't bypass them.
+The `build_deck.py` helpers (`set_text`, `set_block`, `set_bullets`, `set_code`, `get_ph`, `remove_placeholder`) encode these fixes. Use them, don't bypass them.
+
+`set_code(ph, code, *, font="Consolas", size=9)` is for code-showcase slides. It explicitly overrides paragraph spacing (`spcBef`/`spcAft` to 0 and `lnSpc` to 100%) because the master adds bullet-style paragraph spacing that ruins code density. Keep code under ~20 lines at the default 9pt — anything longer overflows the 5.96" wide × 3.97" tall column.
 
 ## Visual QA workflow
 
@@ -103,7 +107,27 @@ LibreOffice renders close to PowerPoint but not identical. Final PowerPoint revi
 | 24 sub-agents (16 Explore, 7 general, 1 Plan) | same |
 | 8 auto-compaction events | grep `"This session is being continued"` in `11e6e374-*.jsonl` |
 
-If you re-mine on the other laptop, regenerate `session_stats.json` first, then update the affected slides.
+If you re-mine on the other laptop, **merge into** `session_stats.json` (don't overwrite — read its `merge_instructions` field for the rules: same-session data union, prefer newer/larger transcripts). Then update slide-level numbers in `build_deck.py` and rebuild.
+
+### Cross-laptop merge recipe (paste-ready)
+
+```python
+import json
+# 1. Load the existing aggregated file (from this laptop) — committed in the repo.
+with open("session_stats.json") as f:
+    existing = json.load(f)
+
+# 2. Mine your own surviving session JSONLs the same way build_deck-side mining
+#    works (see project_stats.json's structure — by_session keys are session-id
+#    strings, each with first_date/last_date/tokens/tool_uses/etc.).
+#    For each session id in your scan, if existing["by_session"][sid]
+#    .available_locally is False (or sid is absent), replace/insert with yours.
+
+# 3. Recompute by_project totals by summing across by_session entries.
+# 4. Re-derive parallelism_note if any new session spans overlap.
+# 5. Write back to session_stats.json, then run build_deck.py with updated
+#    slide-text numbers.
+```
 
 ## Public-repo etiquette
 
