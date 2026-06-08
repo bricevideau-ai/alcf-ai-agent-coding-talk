@@ -1,0 +1,614 @@
+"""Build the ALCF presentation from the template (v2 — addresses QA issues).
+
+Key fixes vs v1:
+- 4-block "big idea" layouts: split header (large bold) from body (smaller, normal)
+  using two paragraphs with explicit font size on the body paragraph.
+- All subtitle text constrained to a single line (~80 chars).
+- All bullet lists trimmed so the body placeholder does not overflow.
+- Title slide image placeholder removed (no image to insert).
+- Quoted text cleaned (typos fixed only when clearly a typo).
+"""
+import copy
+from pptx import Presentation
+from pptx.util import Inches, Pt
+from pptx.dml.color import RGBColor
+from pptx.enum.text import PP_ALIGN
+
+TEMPLATE = "/tmp/ALCF Presentation Template.pptx"
+OUT = "/tmp/ai-agent-coding-alcf.pptx"
+
+# ============================================================================
+# Helpers
+# ============================================================================
+
+def remove_all_slides(pres):
+    sldIdLst = pres.slides._sldIdLst
+    part = pres.part
+    rid_slide = [(sldId.get("{http://schemas.openxmlformats.org/officeDocument/2006/relationships}id"), sldId)
+                 for sldId in list(sldIdLst)]
+    for rId, sldId in rid_slide:
+        sldIdLst.remove(sldId)
+        part.drop_rel(rId)
+
+def remove_placeholder(slide, idx):
+    """Remove a placeholder from a slide entirely (so the layout's empty
+    'click to insert image' prompt doesn't render)."""
+    for ph in list(slide.placeholders):
+        if ph.placeholder_format.idx == idx:
+            sp = ph._element
+            sp.getparent().remove(sp)
+            return True
+    return False
+
+def get_ph(slide, idx):
+    for ph in slide.placeholders:
+        if ph.placeholder_format.idx == idx:
+            return ph
+    raise KeyError(f"no placeholder idx={idx} in slide; have {[p.placeholder_format.idx for p in slide.placeholders]}")
+
+def set_text(ph, text, *, size=None, bold=None):
+    """Single-paragraph text into a placeholder, optionally with size/bold override."""
+    tf = ph.text_frame
+    p0 = tf.paragraphs[0]
+    for r in list(p0.runs):
+        r._r.getparent().remove(r._r)
+    for para in list(tf.paragraphs[1:]):
+        para._p.getparent().remove(para._p)
+    run = p0.add_run()
+    run.text = text
+    if size is not None: run.font.size = Pt(size)
+    if bold is not None: run.font.bold = bold
+
+def set_block(ph, header, body, *, body_size=14):
+    """Big-idea block: header (default style = large bold) + smaller body paragraph.
+
+    The 4-block layout's level-1 default is 32pt bold white. We keep that for the
+    header. For the body, we add a second paragraph and explicitly drop to 14pt
+    normal weight (color is inherited as scheme bg1 = white)."""
+    tf = ph.text_frame
+    # clear
+    p0 = tf.paragraphs[0]
+    for r in list(p0.runs):
+        r._r.getparent().remove(r._r)
+    for para in list(tf.paragraphs[1:]):
+        para._p.getparent().remove(para._p)
+    # Header — inherits 32pt bold from level 1 default
+    run_h = p0.add_run()
+    run_h.text = header
+    # Body paragraph at smaller size
+    p1 = tf.add_paragraph()
+    run_b = p1.add_run()
+    run_b.text = body
+    run_b.font.size = Pt(body_size)
+    run_b.font.bold = False
+    # Force color = white (since we overrode bold/size, color inheritance can be
+    # unreliable across renderers; explicit is safer).
+    run_b.font.color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
+
+def set_bullets(ph, items):
+    """Populate a content placeholder with bullet items (each either text or (text, level))."""
+    tf = ph.text_frame
+    p0 = tf.paragraphs[0]
+    for r in list(p0.runs):
+        r._r.getparent().remove(r._r)
+    for para in list(tf.paragraphs[1:]):
+        para._p.getparent().remove(para._p)
+    paragraphs = [p0]
+    for _ in range(len(items) - 1):
+        paragraphs.append(tf.add_paragraph())
+    for item, para in zip(items, paragraphs):
+        if isinstance(item, tuple):
+            text, level = item
+        else:
+            text, level = item, 0
+        para.level = level
+        run = para.add_run()
+        run.text = text
+
+# ============================================================================
+# Build
+# ============================================================================
+
+pres = Presentation(TEMPLATE)
+remove_all_slides(pres)
+LAYOUTS = pres.slide_layouts
+def add(layout_idx):
+    return pres.slides.add_slide(LAYOUTS[layout_idx])
+
+# --- 1. Title --------------------------------------------------------------
+s = add(0)
+set_text(get_ph(s, 0), "From Directing to Dialogue: Ten Weeks of AI Agent Coding for Performance Engineering")
+set_text(get_ph(s, 1), "Two ALCF-adjacent projects · 7 sessions · ~1,500 prompts")
+set_text(get_ph(s, 17), "Brice Videau")
+set_text(get_ph(s, 18), "Argonne Leadership Computing Facility\nArgonne National Laboratory\nJune 2026")
+# Remove the empty image placeholder and unused presenter slots
+for idx in (10, 19, 20, 21, 22):
+    remove_placeholder(s, idx)
+
+# --- 2. Agenda -------------------------------------------------------------
+s = add(3)
+set_text(get_ph(s, 0), "Agenda")
+set_text(get_ph(s, 13), "Thirty minutes, two case studies, one tool")
+set_bullets(get_ph(s, 14), [
+    "Setup: how Claude Code was used at ALCF",
+    "Project 1 — CCS: directing the agent on familiar code",
+    "Project 2 — rust-gpu + claspr: collaborating across a knowledge gap",
+    "Cross-cutting analysis: tokens, tools, sub-agents, context, memory",
+    "Evolution of interaction style and tooling adoption",
+    "Lessons learned and recommendations for ALCF performance engineering",
+])
+
+# --- 3. Why this evaluation (4-block) -------------------------------------
+s = add(9)
+set_text(get_ph(s, 0), "Why this evaluation")
+set_text(get_ph(s, 13), "Coding agents are real; perf-eng needs to decide where they fit")
+set_block(get_ph(s, 16), "Perf-eng work at ALCF",
+    "Library and runtime work, kernel ports, profiling tooling, long-lived codebases, "
+    "heavy review burden, frequent context switching.")
+set_block(get_ph(s, 17), "Hypothesis",
+    "An agent can carry implementation while the engineer directs design and review.")
+set_block(get_ph(s, 18), "Success criteria",
+    "Shippable PRs on real upstream repos. No regressions on familiar code. "
+    "Credible progress on unfamiliar code. Defensible cost.")
+set_block(get_ph(s, 19), "What this talk is not",
+    "Not a benchmark and not a product comparison. A first-person retrospective from two ALCF-adjacent projects.")
+
+# --- 4. Setup --------------------------------------------------------------
+s = add(6)
+set_text(get_ph(s, 0), "Setup: how Claude Code was used")
+set_text(get_ph(s, 13), "Same tool, two laptops, one persona, six months")
+set_text(get_ph(s, 16), "Environment")
+set_bullets(get_ph(s, 14), [
+    "Intel macOS + Ubuntu Arm laptops",
+    "Claude Code CLI (Opus 4.x / Sonnet 4.x)",
+    "Local toolchains: autotools, cargo, pocl, rusticl",
+    "`gh` CLI for GitHub PRs and CI",
+])
+set_text(get_ph(s, 17), "Persona and isolation")
+set_bullets(get_ph(s, 15), [
+    "Dedicated GitHub identity: bricevideau-ai",
+    "Dedicated gmail for notifications and 2FA",
+    "Commits co-authored by Claude",
+    "Per-project sessions, no cross-project mixing",
+])
+set_text(get_ph(s, 19), "What the agent keeps")
+set_bullets(get_ph(s, 18), [
+    "Per-project CLAUDE.md (orientation)",
+    "Memory entries: feedback / project / reference",
+    "Cross-session prompt history",
+    "Sub-agent transcripts on disk",
+])
+
+# --- 5. Two case studies side by side -------------------------------------
+s = add(5)
+set_text(get_ph(s, 0), "The two case studies, side by side")
+set_text(get_ph(s, 13), "Same tool, two very different collaboration modes")
+set_text(get_ph(s, 16), "CCS (C Configuration Space)")
+set_bullets(get_ph(s, 14), [
+    "Autotuning configuration-space library",
+    "C99, ~52K LOC, Python + Ruby bindings",
+    "I wrote it and maintain it — high expertise",
+    "Feb 25 → Apr 7 (~6 weeks, 3 sessions)",
+    "530 user prompts, 99 PRs (96 merged)",
+    "Mode: direct, correct, ship",
+])
+set_text(get_ph(s, 17), "rust-gpu + claspr")
+set_bullets(get_ph(s, 15), [
+    "OpenCL Kernel target for rust-gpu; claspr single-source layer on top",
+    "Rust + SPIR-V; ~142K + ~81K LOC",
+    "Not a Rust dev; not a SPIR-V expert",
+    "Mar 27 → Jun 8 (~10 weeks, 4 sessions)",
+    "964 user prompts, 24,540-line PR + greenfield repo",
+    "Mode: explore, dialogue, decide, ship",
+])
+
+# --- 6. Section break: CCS ------------------------------------------------
+s = add(2)
+set_text(get_ph(s, 0), "Case study 1\nCCS — directing the agent on familiar code")
+
+# --- 7. CCS in 60 seconds -------------------------------------------------
+s = add(4)
+set_text(get_ph(s, 0), "CCS in sixty seconds")
+set_text(get_ph(s, 13),
+    "C99 library exposing autotuning configuration spaces, objective spaces, and tuners with an "
+    "ask/tell pattern. Parameters can be numerical, categorical, ordinal, or string; spaces support "
+    "conditions, forbidden clauses, expression trees, and feature contexts. Reference-counted objects, "
+    "JSON and binary serialization, Python and Ruby bindings, Kokkos profiling connector. "
+    "Used by autotuning workflows where multiple frameworks need to interoperate.")
+
+# --- 8. CCS workflow ------------------------------------------------------
+s = add(3)
+set_text(get_ph(s, 0), "CCS workflow with the agent")
+set_text(get_ph(s, 13), "Branch-per-task; PR-per-task; aggressive rebasing")
+set_bullets(get_ph(s, 14), [
+    "Every change opens a branch off devel and a single-topic PR",
+    "Agent commits as bricevideau-ai, co-authored by Claude",
+    ("I am the reviewer — every PR is read and merged manually", 1),
+    "Rebase devel on upstream after merge — drilled in as a memory rule",
+    "CI: clang-format-17, sanitizers, valgrind, multi-binding tests",
+    ("Agent regressed to plain clang-format once — corrected, then memorized", 1),
+    "make check / make check-valgrind is the contract for green",
+])
+
+# --- 9. CCS what landed ---------------------------------------------------
+s = add(5)
+set_text(get_ph(s, 0), "CCS — what landed in six weeks")
+set_text(get_ph(s, 13), "96 PRs merged on argonne-lcf/CCS by the AI persona")
+set_text(get_ph(s, 16), "Numbers")
+set_bullets(get_ph(s, 14), [
+    "99 PRs opened (#24 → #122)",
+    "96 merged, 3 closed (~97% merge rate)",
+    "~16 PRs per week sustained",
+    "Each PR reviewable in <10 minutes",
+])
+set_text(get_ph(s, 17), "Topics by volume")
+set_bullets(get_ph(s, 15), [
+    "JSON serialization stack — extract/embed/array/scalar helpers",
+    "Deserializer redesign — typed, no serialize-in-deserialize",
+    "Bug fixes surfaced by gcov coverage analysis",
+    "Binding parity — Ruby + Python exposure",
+    "Doxygen + Markdown documentation rewrites",
+])
+
+# --- 10. CCS how I interacted (4-block) -----------------------------------
+s = add(9)
+set_text(get_ph(s, 0), "CCS — how I interacted")
+set_text(get_ph(s, 13), "Short, directive prompts; frequent corrections")
+set_block(get_ph(s, 16), "Direct correction",
+    "“No, check again.” — said often, without preamble. The agent treated as a junior dev.")
+set_block(get_ph(s, 17), "Catching toolchain drift",
+    "“I noticed you started using clang-format instead of clang-format-17.”")
+set_block(get_ph(s, 18), "Holding a quality line",
+    "“I don’t think computer scientists should be lazy, it usually ends up costing us more in the long run.”")
+set_block(get_ph(s, 19), "Project idioms",
+    "“Could you please use CCS_REFUTE_ERR_GOTO instead?” Macros must be taught — then re-taught after each compaction.")
+
+# --- 11. CCS wins ---------------------------------------------------------
+s = add(6)
+set_text(get_ph(s, 0), "CCS — wins")
+set_text(get_ph(s, 13), "Where the agent unambiguously moved the project forward")
+set_text(get_ph(s, 16), "Coverage push")
+set_bullets(get_ph(s, 14), [
+    "gcov tooling added as CI step",
+    "Coverage gaps → test PRs",
+    "Surfaced uninit-after-goto, realloc cleanup, deserialize bounds",
+])
+set_text(get_ph(s, 17), "Format and docs")
+set_bullets(get_ph(s, 15), [
+    "Full JSON serialization across every CCS object class",
+    "Versioned format header, round-trip tests",
+    "Deserialize made typed — code-smell eliminated",
+])
+set_text(get_ph(s, 19), "Binding parity")
+set_bullets(get_ph(s, 18), [
+    "Ruby + Python: missing C functions exposed",
+    "Tests written for previously uncovered paths",
+    "Critical binding bugs fixed",
+])
+
+# --- 12. CCS pitfalls -----------------------------------------------------
+s = add(3)
+set_text(get_ph(s, 0), "CCS — pitfalls observed")
+set_text(get_ph(s, 13), "Even on owned code, the agent leaks bad habits unless gated")
+set_bullets(get_ph(s, 14), [
+    "Silent toolchain swaps (clang-format vs -17): caught by visual diff of CI output",
+    "Default-to-laziness on cleanup paths and overflow checks",
+    "Out-of-scope edits crept in: “you accidentally modified lines out of scope”",
+    "Repeated reminders needed for macro/idiom families (CCS_REFUTE_ERR_GOTO)",
+    "Doc format tensions: “the html is fixed but the markdown is now broken”",
+    ("Mitigation: short PRs + active review + memory + CLAUDE.md", 1),
+])
+
+# --- 13. Section break: rust-gpu/claspr -----------------------------------
+s = add(2)
+set_text(get_ph(s, 0), "Case study 2\nrust-gpu + claspr — across a knowledge gap")
+
+# --- 14. rust-gpu/claspr 60 sec -------------------------------------------
+s = add(4)
+set_text(get_ph(s, 0), "rust-gpu + claspr in sixty seconds")
+set_text(get_ph(s, 13),
+    "rust-gpu compiles Rust to SPIR-V; it targeted Vulkan only. We added the OpenCL Kernel execution model: "
+    "Physical64 addressing, mandatory OpenCL capabilities, slice decomposition into (ptr, len) pairs, "
+    "OpenCL.std math intrinsics, native CL vector types (Float4, Int8, Long16, swizzles), DebugPrintf, "
+    "subgroup and work-group collectives, storage images and samplers, atomic flags, f64 throughout. "
+    "claspr is the host-side layer on top: a #[claspr::device] proc-macro extracts a kernel sub-crate at "
+    "build time, generates a typed launch wrapper, and gives users single-source OpenCL in Rust.")
+
+# --- 15. Knowledge-gap shift (4-block) ------------------------------------
+s = add(9)
+set_text(get_ph(s, 0), "The knowledge-gap shift")
+set_text(get_ph(s, 13), "Same engineer, same tool — completely different mode")
+set_block(get_ph(s, 16), "What I do know",
+    "OpenCL spec, SPIR-V semantics, HPC kernel perf-eng, library and runtime design, implementation quirks.")
+set_block(get_ph(s, 17), "What I do not know",
+    "Rust idioms, rust-gpu codegen internals, proc-macro authoring, async Rust, Rust GPU conventions.")
+set_block(get_ph(s, 18), "What this changes",
+    "I cannot pre-write the answer in my head. I have to let the agent enumerate options and reason out loud.")
+set_block(get_ph(s, 19), "New rhythm",
+    "Explore → enumerate → discuss → decide → implement → review. Agent enumerates; engineer judges.")
+
+# --- 16. rust-gpu what landed ---------------------------------------------
+s = add(5)
+set_text(get_ph(s, 0), "rust-gpu + claspr — what landed")
+set_text(get_ph(s, 13), "One large fork PR + one new repository + a full test infrastructure")
+set_text(get_ph(s, 16), "rust-gpu PR #3 (OpenCL Kernel)")
+set_bullets(get_ph(s, 14), [
+    "+24,540 / -595 lines across 761 files",
+    "Eight spirv-unknown-opencl* targets",
+    "OpenCL Kernel execution model end-to-end",
+    "spirv-std: cl::*, opencl_std, printf!, atomics, groups",
+    "Difftests on rusticl/llvmpipe in CI",
+])
+set_text(get_ph(s, 17), "claspr (greenfield)")
+set_bullets(get_ph(s, 15), [
+    "182 commits, ~81K LOC of Rust",
+    "Proc-macro single-source: #[claspr::device], #[claspr::kernel]",
+    "Two-tier op model: Tier 1 ops + Tier 2 async chains",
+    "Access markers (ReadWrite/ReadOnly/Frozen/…)",
+    "Examples: raymarch, mandelbrot, sobel, image-pipeline",
+])
+
+# --- 17. rust-gpu workflow ------------------------------------------------
+s = add(3)
+set_text(get_ph(s, 0), "rust-gpu / claspr workflow")
+set_text(get_ph(s, 13), "Branch discipline, cross-laptop handoff, upstream-aware")
+set_bullets(get_ph(s, 14), [
+    "Started from upstream issue #74 — reproduce, then design",
+    "Two long-lived branches: opencl-kernel-support (stable) and -v2 (dev)",
+    ("Samples repo tracks stable; promotion is explicit, not automatic", 1),
+    "Cross-laptop sessions handed off explicitly between macOS and Ubuntu Arm",
+    "Lint-before-push enforced after one CI failure (memorized)",
+    "Rebase after merge enforced after the agent forgot once (memorized)",
+    "claspr CI runs on rusticl/llvmpipe so reviewers can rerun",
+])
+
+# --- 18. rust-gpu how I interacted (4-block) ------------------------------
+s = add(9)
+set_text(get_ph(s, 0), "rust-gpu — interaction in knowledge-gap mode")
+set_text(get_ph(s, 13), "Directive shrinks, dialogue grows")
+set_block(get_ph(s, 16), "Scope-cutting",
+    "“Alright, let me help refocus. I would be fine with a test that leverages the spirv(kernel) model, not a crate.”")
+set_block(get_ph(s, 17), "Memory-anchored",
+    "“I remember you telling me that the runner put the arguments in different order than the sources.”")
+set_block(get_ph(s, 18), "Collaborative design",
+    "“I want to have a conversation around Async/Sync and InOrder/OutOfOrder. But first — can Rust polymorphism depend on the return value?”")
+set_block(get_ph(s, 19), "Pre-emptive context discipline",
+    "“You can create a WIP document describing the design as we progress — never know when compaction will bite us.”")
+
+# --- 19. Design dialogues -------------------------------------------------
+s = add(6)
+set_text(get_ph(s, 0), "Design dialogues that produced real decisions")
+set_text(get_ph(s, 13), "Cases where the agent enumerated trade-offs and I picked")
+set_text(get_ph(s, 16), "Execution model")
+set_bullets(get_ph(s, 14), [
+    "Async vs sync, in-order vs out-of-order",
+    "and_then chain returning values",
+    "with_context as access-only, not sync escape",
+    "Default in-order per device; OOO opt-in",
+])
+set_text(get_ph(s, 17), "Memory and safety")
+set_bullets(get_ph(s, 15), [
+    "alloc_uninit marked unsafe (no MaybeUninit in rust-gpu)",
+    "Access markers as type-state",
+    "HostBuffer persistent-map flagged UB per spec",
+    "Arc<DeviceSlice> read-only, write-then-share",
+])
+set_text(get_ph(s, 19), "Abstractions")
+set_bullets(get_ph(s, 18), [
+    "Tier 1 (ops) decoupled from Tier 2 (async)",
+    "KernelOp trait so proc-macro stays light",
+    "Late-bind launcher: buf.write(&data).wait(&ctx)?",
+    "Spike scenarios kept as design docs",
+])
+
+# --- 20. rust-gpu pitfalls ------------------------------------------------
+s = add(3)
+set_text(get_ph(s, 0), "rust-gpu / claspr — pitfalls observed")
+set_text(get_ph(s, 13), "Different failure modes when expertise is asymmetric")
+set_bullets(get_ph(s, 14), [
+    "Context exhaustion: 8 auto-compactions in one rolling session",
+    "Drift after compaction: required explicit difftest run-command memory",
+    "Cleaning up legitimate spike code as if it were dead code",
+    "Tool/version regressions: pocl rebuilds + LLVM drift → silent kernel hangs",
+    "Glam transitive-dep mismatch: “I don’t understand how this happened”",
+    ("Mitigation: end sessions; preempt compaction; pin versions; memory entries", 1),
+])
+
+# --- 21. Section break: cross-cutting -------------------------------------
+s = add(2)
+set_text(get_ph(s, 0), "Cross-cutting analysis\nWhat the data shows across both projects")
+
+# --- 22. Tool-call distribution -------------------------------------------
+s = add(5)
+set_text(get_ph(s, 0), "Tool-call distribution")
+set_text(get_ph(s, 13), "From the two locally-available rust-gpu sessions")
+set_text(get_ph(s, 16), "Top tools by call count")
+set_bullets(get_ph(s, 14), [
+    "Bash         4,431   ~60%",
+    "Edit         1,758   ~24%",
+    "Read           883   ~12%",
+    "TaskUpdate     429   (todo tracking)",
+    "Write          352   (new files)",
+    "Grep, Glob, MultiEdit: long tail",
+])
+set_text(get_ph(s, 17), "What this means")
+set_bullets(get_ph(s, 15), [
+    "Bash dominates — agent lives in the shell, not just the editor",
+    "Edit/Read ratio ~2:1 — read broadly, edit surgically",
+    "TaskUpdate non-trivial — todo lists are load-bearing UX",
+    "Write small — most output goes into existing files",
+])
+
+# --- 23. Sub-agent adoption curve -----------------------------------------
+s = add(5)
+set_text(get_ph(s, 0), "Sub-agent adoption curve")
+set_text(get_ph(s, 13), "Late adoption, then sudden; specialized agents won")
+set_text(get_ph(s, 16), "By session (rust-gpu)")
+set_bullets(get_ph(s, 14), [
+    "Session 1 (Mar–Apr): 0 sub-agents",
+    "Session 2 (Apr):      0 sub-agents",
+    "Session 3 (May):      0 sub-agents",
+    "Session 4 (May–Jun): 24 sub-agents",
+    "Mix: 16 Explore, 7 general, 1 Plan",
+])
+set_text(get_ph(s, 17), "Representative agent labels")
+set_bullets(get_ph(s, 15), [
+    "Explore: Map current claspr public API",
+    "Explore: Audit spike scenarios vs original intent",
+    "Explore: Tier1/Tier2 abstraction-parity audit",
+    "Plan: Design + risks for async and_then_host",
+    "general: SYCL 2020 runtime API study (research)",
+])
+
+# --- 24. Token economics (4-block) ----------------------------------------
+s = add(9)
+set_text(get_ph(s, 0), "Token economics")
+set_text(get_ph(s, 13), "The cache dominates the bill")
+set_block(get_ph(s, 16), "Raw input is tiny",
+    "273K input tokens total — prompts are short, most context is reused from the cache.")
+set_block(get_ph(s, 17), "Cache reads dominate",
+    "7.18 BILLION cache-read tokens. ~96% effective cache hit rate on incoming context.")
+set_block(get_ph(s, 18), "Output is significant but bounded",
+    "15.5M output tokens, ~12,000 assistant turns, ~1.3K tokens each — rate-limit pressure.")
+set_block(get_ph(s, 19), "Cost ceiling vs real cost",
+    "Naive Opus ceiling: ~$16.7K for both sessions. Actual much lower (Sonnet + cache-read pricing).")
+
+# --- 25. Memory system ----------------------------------------------------
+s = add(6)
+set_text(get_ph(s, 0), "Memory system in practice")
+set_text(get_ph(s, 13), "30+ entries built up; indexed by MEMORY.md")
+set_text(get_ph(s, 16), "feedback (rules)")
+set_bullets(get_ph(s, 14), [
+    "clang-format-17, not clang-format",
+    "Rebase devel after merge, unprompted",
+    "cargo fmt + clippy before push",
+    "Respect spike intent",
+])
+set_text(get_ph(s, 17), "project (decisions)")
+set_bullets(get_ph(s, 15), [
+    "OpenCL kernel stable promoted from -v2",
+    "Access markers landed (5 markers + tests)",
+    "alloc_uninit marked unsafe",
+    "with_context removed",
+])
+set_text(get_ph(s, 19), "reference (where to look)")
+set_bullets(get_ph(s, 18), [
+    "pocl 7.2-pre at ~/.local (patched)",
+    "Intel OpenCL Intercept Layer",
+    "macOS opencl3 picks Apple framework",
+    "Rusticl queue unusable after termination",
+])
+
+# --- 26. Context-window management ----------------------------------------
+s = add(5)
+set_text(get_ph(s, 0), "Context-window management is part of the workflow")
+set_text(get_ph(s, 13), "200K is large until it isn’t")
+set_text(get_ph(s, 16), "Symptoms")
+set_bullets(get_ph(s, 14), [
+    "Auto-compaction: 8 distinct days in one session",
+    "Each compaction summarizes prior turns",
+    "Quality dips: forgotten conventions",
+    "Memory entries are the only ground truth across compactions",
+])
+set_text(get_ph(s, 17), "Practices that worked")
+set_bullets(get_ph(s, 15), [
+    "Preempt: “be careful context is almost full, please anticipate”",
+    "Manual /compact and /clear",
+    "WIP design docs written to disk",
+    "End-of-session: update CLAUDE.md and memory",
+    "Sub-agents absorb cost instead of inflating context",
+])
+
+# --- 27. Evolution CCS → claspr -------------------------------------------
+s = add(5)
+set_text(get_ph(s, 0), "Evolution of interaction style")
+set_text(get_ph(s, 13), "From short directives to long design dialogues")
+set_text(get_ph(s, 16), "Early (CCS era, Feb–Apr)")
+set_bullets(get_ph(s, 14), [
+    "Short prompts, often <30 words",
+    "PR-per-task, ship-fast cadence",
+    "Zero sub-agents, zero skills, ~no slash cmds",
+    "Memory hand-rolled via README + CLAUDE.md",
+    "Errors caught in human review, not agent self-review",
+])
+set_text(get_ph(s, 17), "Late (claspr era, May–Jun)")
+set_bullets(get_ph(s, 15), [
+    "Longer prompts with design questions",
+    "Explore sub-agents fan out research in parallel",
+    "Plan sub-agent before non-trivial implementation",
+    "30+ memory entries; CLAUDE.md as orientation contract",
+    "Pre-emptive /compact; agent enumerates, engineer picks",
+])
+
+# --- 28. What worked best (4-block) ---------------------------------------
+s = add(9)
+set_text(get_ph(s, 0), "What worked best")
+set_text(get_ph(s, 13), "Patterns the data and the experience agree on")
+set_block(get_ph(s, 16), "Expert + agent on familiar code",
+    "CCS: 16 PRs/week sustained, 97% merge rate. Expert pays review tax; agent pays typing tax.")
+set_block(get_ph(s, 17), "Explore-then-decide on new code",
+    "Parallel Explore sub-agents survey the design space; engineer makes the call.")
+set_block(get_ph(s, 18), "Short PRs + active review",
+    "Single-topic, mergeable in ~10 min review. Out-of-scope creep caught immediately.")
+set_block(get_ph(s, 19), "Memory + CLAUDE.md as ground truth",
+    "Survives compaction, sessions, laptops. Conventions encoded once, not re-litigated.")
+
+# --- 29. Anti-patterns (4-block) ------------------------------------------
+s = add(9)
+set_text(get_ph(s, 0), "Anti-patterns observed")
+set_text(get_ph(s, 13), "Failure modes seen at least once each")
+set_block(get_ph(s, 16), "One rolling forever-session",
+    "Hot state is tempting. But every compaction is a quality hit. End sessions explicitly.")
+set_block(get_ph(s, 17), "Trusting CI-green without diff",
+    "Toolchain swaps, dep drift, out-of-scope edits all pass CI. Diff review is not optional.")
+set_block(get_ph(s, 18), "Letting the agent pick the toolchain",
+    "clang-format vs -17, glam version, pocl local vs system. Pin versions in CLAUDE.md.")
+set_block(get_ph(s, 19), "Cleaning up unfamiliar patterns",
+    "Agent removes spike code or workarounds it doesn’t recognize. Document intent inline first.")
+
+# --- 30. Implications -----------------------------------------------------
+s = add(6)
+set_text(get_ph(s, 0), "Implications for performance engineering")
+set_text(get_ph(s, 13), "Where AI agents fit and where they don’t")
+set_text(get_ph(s, 16), "Net-positive cases")
+set_bullets(get_ph(s, 14), [
+    "Mature codebases the engineer owns",
+    "Coverage push, doc rewrite, binding parity",
+    "Repetitive fix campaigns from CI signals",
+    "Multi-language interop work",
+])
+set_text(get_ph(s, 17), "Conditional cases")
+set_bullets(get_ph(s, 15), [
+    "Unfamiliar code with clear spec",
+    "Greenfield with strong design dialogue",
+    "Cross-language interop, with careful review",
+])
+set_text(get_ph(s, 19), "Avoid for now")
+set_bullets(get_ph(s, 18), [
+    "Microbenchmark optimization without validation",
+    "Codebases where the spec is the code itself",
+    "Time-pressured work with no review headroom",
+    "Single rolling session beyond a few days",
+])
+
+# --- 31. Recommendations --------------------------------------------------
+s = add(3)
+set_text(get_ph(s, 0), "Recommendations — starter checklist")
+set_text(get_ph(s, 13), "If you start an agent-assisted project tomorrow")
+set_bullets(get_ph(s, 14), [
+    "Give the agent its own GitHub identity",
+    "Write a CLAUDE.md from day 1 (conventions, build, test, taboos)",
+    "Maintain memory: feedback rules, project decisions, references",
+    "Short PRs, one topic, mergeable in <10 min review",
+    "Pin toolchain versions explicitly",
+    "End sessions before they end you; preempt /compact",
+    "Use Explore sub-agents whenever you don’t know the answer",
+    "Trust diff inspection, not CI-green, as the merge gate",
+])
+
+# --- 32. Closing ----------------------------------------------------------
+add(13)
+
+pres.save(OUT)
+print(f"Wrote {OUT}")
+print(f"Slide count: {len(pres.slides)}")
