@@ -1,8 +1,8 @@
 # Repo orientation for Claude — alcf-ai-agent-coding-talk
 
-This is a 32-slide ALCF talk evaluating Brice's use of Claude Code on two projects: CCS and rust-gpu + claspr. The deck was authored on the **Arm Mac laptop** (Ubuntu environment on macOS host — `aarch64`, hostname `bvideau-VMware20-1`). It will be reviewed and finalized on the **other laptop**, which is a **native Intel Ubuntu install** — where you, the next agent, are reading this. Read this before editing.
+This is a **36-slide** ALCF talk evaluating Brice's use of Claude Code on two projects: CCS and rust-gpu + claspr. The deck was authored on the **Arm Mac laptop** (Ubuntu environment on macOS host — `aarch64`, hostname `bvideau-VMware20-1`), then reviewed and enriched on the **native-Intel-Ubuntu laptop** on 2026-06-09 — see *Linux-laptop merge* below.
 
-If a user prompt anywhere in the surviving session history says "the linux laptop", they mean the native-Intel-Ubuntu laptop (i.e. you). If they say "the mac" or "the other laptop", they mean the Arm one where this deck was authored.
+If a user prompt anywhere in the surviving session history says "the linux laptop", they mean the native-Intel-Ubuntu laptop. If they say "the mac" or "the other laptop", they mean the Arm one where this deck was originally authored.
 
 ## Files
 
@@ -37,32 +37,36 @@ After editing, `git add ai-agent-coding-alcf.pptx ai-agent-coding-alcf.pdf build
 - 36 slides total. Sized for ~30–35 min of presenting. Slot is up to an hour including Q&A and Brice plans to add his own slides too — so don't pad this deck further; trim if you want to grow elsewhere.
 
 **Open for the other laptop to enrich:**
-- §CCS slides (#7–14). Built from the CCS repo + the user prompts surviving in `~/.claude/history.jsonl` only — the full session JSONLs were already evicted by Claude Code's 30-day session retention before this deck was built (see *Data availability* below). If the other laptop has surviving artifacts (e.g. local notes, screenshots, anything else), those are net-new and worth adding.
-- Slides #25–28 (tool-call distribution / sub-agent adoption / model progression / token economics): currently aggregated from **only the two locally-surviving rust-gpu sessions** (a910ecaa, 11e6e374). For tool/sub-agent counts use the merge recipe at the bottom; **for cost, use ccusage** (see `ccusage/README.md`).
+- §CCS slides (#7–14). Built from the CCS repo + the user prompts surviving in `~/.claude/history.jsonl` only — the full session JSONLs were already evicted by Claude Code's 30-day session retention before this deck was built (see *Data availability* below). The Linux-merge pass on 2026-06-09 added one CCS session (`d1bcaa09`, 70 prompts) to the chronology but did not change §CCS slide content — its JSONL was also evicted.
+- Slides #25–28 (tool-call distribution / sub-agent adoption / model progression / token economics): now aggregated from **5 surviving rust-gpu sessions** across both laptops (a910ecaa, 11e6e374, 4862cd6d, 61dc0523, afa1ce4c). For tool/sub-agent counts use the merge recipe at the bottom; **for cost, use ccusage** (see `ccusage/README.md`).
 - Quotes on slides #12 and #21 are paraphrased lightly from real user prompts; verbatim alternatives are fine.
 - Code showcases (#8 CCS, #16 claspr): trimmed examples; longer or different illustrative snippets are fine if they fit at 9pt Consolas in the left column.
-- Chronology slide (#6) is text-based monospace ASCII. If the other-laptop session list (within its 30-day window) reveals any I missed, add a row and update the parallelism caption.
+- Chronology slide (#6) is text-based monospace ASCII, **now 17 rows** (Mac + Linux sessions interleaved by date) at 7pt. If a future merge adds rows, bump font down or trim the spacing comment to fit.
 
 ## Critical context: data availability
 
-> The new Claude Code 30-day session-eviction policy is what bit us. Sessions older than 30 days at the time of authoring (2026-06-08) are gone from disk. They are not on the other laptop either — they're just lost.
+> The Claude Code 30-day session-eviction policy is what bit us. Sessions older than 30 days at the time of authoring/merging are gone from disk. The Linux merge on 2026-06-09 confirmed what the original Mac authoring suspected: the missing sessions are not on the other laptop either — they're just lost.
 
-Available on the Linux laptop at authoring time:
-- `~/.claude/projects/-home-claudecode-projects/a910ecaa-*.jsonl` (rust-gpu, May 4–13)
-- `~/.claude/projects/-home-claudecode-projects/11e6e374-*.jsonl` (rust-gpu, May 13–Jun 8)
-- `~/.claude/projects/-home-claudecode-projects/memory/` (30+ entries — these survive)
-- `~/.claude/history.jsonl` (prompts only — does survive eviction; ~1,500 prompts across all 7 sessions)
+**Surviving full JSONLs (5 sessions, both laptops):**
+- Mac    `a910ecaa-*.jsonl` (rust-gpu, May 4–13)
+- Mac    `11e6e374-*.jsonl` (rust-gpu, May 13–Jun 8)
+- Linux  `4862cd6d-*.jsonl` (rust-gpu, May 11)
+- Linux  `61dc0523-*.jsonl` (rust-gpu, May 14)
+- Linux  `afa1ce4c-*.jsonl` (rust-gpu, May 14–Jun 8)
+- Plus `memory/` directories on both laptops (these survive eviction).
 
-Lost (do not bother searching for):
-- CCS sessions `3f086a62`, `add0d69f`, `ca6a2dde` (Feb–Apr 2026)
-- rust-gpu sessions `dd63080c`, `e493c2fd` (Mar–Apr 2026)
+**Prompts-only via `~/.claude/history.jsonl` (the 12 evicted sessions):**
+- CCS Mac:    `3f086a62`, `add0d69f`, `ca6a2dde`
+- CCS Linux:  `d1bcaa09`
+- rgpu Mac:   `dd63080c`, `e493c2fd`
+- rgpu Linux: `daf9f59c`, `b74f64ed`, `e80de831`, `da4896fe`, `a9eacbbc`, `fd509bb7`
 
-What survives for those lost sessions:
-- User prompts in `~/.claude/history.jsonl` (the deck pulls extensively from these — see `deck_outline.md`)
-- Git history of the actual codebases (CCS, rust-gpu, claspr) and the PRs in those repos
+For those evicted sessions, what we still have:
+- User prompts in `~/.claude/history.jsonl` on the originating laptop
+- Git history of the actual codebases (CCS, rust-gpu, claspr) and PRs in those repos
 - Memory entries built up over time
 
-**Optional add for the other agent:** if you think the 30-day eviction caveat itself is worth a bullet on slide #22 or #26, it's a fair methodological note. I left it out to keep the deck focused, but it's a real signal about how this kind of retrospective gets harder over time.
+**Optional add for a future agent:** if you think the 30-day eviction caveat itself is worth a bullet on slide #22, it's a fair methodological note. Slide #26 already mentions it briefly as a caveat at the bottom of "What this means". If a third pass adds more context here, lean toward making the caveat more explicit on slide #26 (it's the most data-dependent slide).
 
 ## Systemic QA issues already fixed — do not regress
 
@@ -100,34 +104,52 @@ LibreOffice renders close to PowerPoint but not identical. Final PowerPoint revi
 | Number on slide | Source |
 |---|---|
 | 96/99 CCS PRs, ~16/wk, #24→#122 | `gh pr list -R argonne-lcf/CCS --author bricevideau-ai --state all --limit 200` |
-| 530 / 964 user prompts | `~/.claude/history.jsonl` filtered by sessionId |
+| 600 / 2,059 user prompts (CCS / rust-gpu) | `~/.claude/history.jsonl` on **both** laptops, summed and deduped by sessionId. 17 sessions total. |
 | rust-gpu PR #3 +24,540/-595/761 files | `gh pr view 3 -R bricevideau-ai/rust-gpu --json additions,deletions,changedFiles` |
 | claspr 182 commits / ~81K LOC | `git log --oneline` and `find … -name '*.rs' \| xargs wc -l` in `~/projects/claspr` |
-| Cost figures on slide 28 ($2,505 measured, $4.5–5.5K projected full project) | **`ccusage/` directory** — `ccusage@latest claude {session,daily,blocks} --json` snapshots. **This is canonical for cost** — do not use the per-token totals I computed in `session_stats.json`. The README there has the projection method. |
-| 3.5B cache reads / 141K input / 6.1M output | `ccusage/session.json` (rust-gpu sessions, summed); supersedes my earlier `session_stats.json` numbers which were double-counted. Visible-portion-only. |
-| 24 sub-agents (16 Explore, 7 general, 1 Plan) | `session_stats.json` (this metric was correct) |
+| Cost figures on slide 28 ($3,474 measured, $8.6–9.6K projected full project) | **`ccusage/` directory** — `ccusage@latest claude {session,daily,blocks} --json` snapshots from **both** laptops (`session.json` + `session.linux.json`). **Canonical for cost** — do not use the per-token totals from `session_stats.json`. The README there has the projection method. |
+| 9.5B cache reads / 431K input / 18.7M output | `session_stats.json` `by_project.rust-gpu` (5 surviving rust-gpu sessions, both laptops, summed). Visible-portion-only. |
+| 25 sub-agents (16 Explore, 7 general, 1 Plan, 1 claude-code-guide) — Mac 24 / Linux 1 across 26 parallel days | `session_stats.json` per-session counts (Mac `11e6e374` = 24; Linux `afa1ce4c` = 1; others 0) |
 | 8 auto-compaction events | grep `"This session is being continued"` in `11e6e374-*.jsonl` |
+| 26-day max overlap (afa1ce4c Linux / 11e6e374 Mac) | `session_stats.json` `overlaps_top[0]` — recompute from `session_chronology` if sessions change |
 
-If you re-mine on the other laptop, **merge into** `session_stats.json` (don't overwrite — read its `merge_instructions` field for the rules: same-session data union, prefer newer/larger transcripts). Then update slide-level numbers in `build_deck.py` and rebuild.
+If you re-mine, **merge into** `session_stats.json` (don't overwrite — read its `merge_instructions` field for the rules: same-session data union, prefer newer/larger transcripts). Then update slide-level numbers in `build_deck.py` and rebuild.
 
-### Cross-laptop merge recipe (paste-ready)
+**Schema is now v3** (after 2026-06-09 Linux merge):
+- Each `by_session` entry has a `host` field (`arm-mac-ubuntu` or `linux-intel-ubuntu`) so you can attribute work cleanly.
+- `merge_history` records each laptop that contributed, with date.
+- `overlaps_top` (top-10 pairs by overlap days) replaced the single-string `parallelism_note`. The deck's chronology caption pulls from `overlaps_top[0]`.
+
+### Re-merge recipe (paste-ready)
 
 ```python
-import json
-# 1. Load the existing aggregated file (from this laptop) — committed in the repo.
-with open("session_stats.json") as f:
-    existing = json.load(f)
+import json, datetime
+from collections import Counter, defaultdict
+from pathlib import Path
 
-# 2. Mine your own surviving session JSONLs the same way build_deck-side mining
-#    works (see project_stats.json's structure — by_session keys are session-id
-#    strings, each with first_date/last_date/tokens/tool_uses/etc.).
-#    For each session id in your scan, if existing["by_session"][sid]
-#    .available_locally is False (or sid is absent), replace/insert with yours.
+REPO = Path('.')
+existing = json.load(open(REPO/'session_stats.json'))
 
-# 3. Recompute by_project totals by summing across by_session entries.
-# 4. Re-derive parallelism_note if any new session spans overlap.
-# 5. Write back to session_stats.json, then run build_deck.py with updated
-#    slide-text numbers.
+# 1. Mine your laptop's surviving session JSONLs.
+#    Same schema as existing entries: project, session_id, host,
+#    available_locally, first_date/last_date, first_ts_utc/last_ts_utc,
+#    duration_hours_wallclock, user_msgs, assistant_msgs,
+#    input/output/cache_creation/cache_read_tokens,
+#    subagent_calls, subagent_types, tool_uses_top, model_uses,
+#    slash_commands, skills_used.
+# 2. Mine ~/.claude/history.jsonl on the same laptop for prompt counts by
+#    sessionId; map each unfamiliar sessionId to its project by inspecting
+#    the first prompt (look for "rust-gpu" / "CCS" / "claspr" mentions).
+# 3. For each new sessionId: if existing[by_session][sid].available_locally
+#    is False or absent, insert/replace with yours.
+# 4. Recompute by_project totals (sum across by_session); recompute
+#    overlaps_top by pairing all sessions whose date ranges intersect.
+# 5. Update `merge_history`, bump `generated_at` and `generated_on_laptop`.
+# 6. Update slide numbers in build_deck.py (subtitle, slide 5, 6, 25, 26, 28)
+#    and the "source of truth" table above. Rebuild + visual QA.
+# 7. Also rerun `ccusage` and save under ccusage/session.<host>.json etc.
+#    Cost on slide 28 is sum of every session's totalCost across ALL
+#    ccusage/session*.json files, deduped by sessionId.
 ```
 
 ## Public-repo etiquette

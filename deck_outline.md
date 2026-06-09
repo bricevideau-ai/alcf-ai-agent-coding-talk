@@ -1,23 +1,28 @@
 # Deck outline — Evaluating AI Agent Coding for Performance Engineering at ALCF
 
-**Target:** 30-min talk, ~30 content slides + cover + closing (32 total). Audience: ALCF perf-eng peers (deep technical). Style: conservative ALCF template.
+**Target:** 30-min talk, **36 slides** as shipped (was scoped at 32). Audience: ALCF perf-eng peers (deep technical). Style: conservative ALCF template.
 
-## Numbers I'll use (sourced)
+**Doc status:** the original outline below was the Mac-side design doc; the **shipped deck and `build_deck.py` are the source of truth** for current text and slide numbering. The numbers block immediately below was refreshed on 2026-06-09 after merging in 10 additional sessions surviving on the Linux laptop.
 
-- **CCS**: 3 sessions, 530 user prompts in history, Feb 25 → Apr 7 2026 (~6 weeks), 99 PRs by bricevideau-ai (96 merged, 3 closed). C/C++ codebase ~52K LOC.
-- **rust-gpu**: 4 sessions, 964 user prompts in history, Mar 27 → Jun 8 2026 (~10 weeks). PR #3 = +24,540/-595 across 761 files. Rust codebase ~142K LOC (full rust-gpu).
+## Numbers I'll use (sourced, merged 2026-06-09)
+
+- **CCS**: **4 sessions** (3 Mac + 1 Linux), **600 user prompts** in history, Feb 25 → Apr 7 2026 (~6 weeks), 99 PRs by bricevideau-ai (96 merged, 3 closed). C/C++ codebase ~52K LOC. *(Linux session `d1bcaa09`, Mar 30 → Apr 6, 70 prompts — was the first session on this laptop.)*
+- **rust-gpu**: **13 sessions** (4 Mac + 9 Linux), **2,059 user prompts** in history, Mar 27 → Jun 8 2026 (~10 weeks). PR #3 = +24,540/-595 across 761 files. Rust codebase ~142K LOC (full rust-gpu).
 - **claspr**: green-field repo, 182 commits, ~81K LOC.
-- **Local JSONLs**: only sessions `a910ecaa` (7.4 MB, 209 user / 1747 asst msgs) and `11e6e374` (75 MB, 682 user / 12,222 asst msgs). Other sessions only have prompts via `history.jsonl`.
-- **Token usage (available rust-gpu sessions only)**: 273K raw input, 15.5M output, 254M cache writes, **7.18B cache reads**. Cache-read dominates by ~30×; effective bill is much lower than naïve in+out reads.
-- **Cost ceiling** at Opus 4 pricing for the 2 available sessions: ~$16.7K. Actual was much lower — most was on Sonnet 4.x, and the cache-read price is 1/10 the cache-write.
-- **Tool distribution (11e6e374)**: Bash 3791, Edit 1687, Read 831, TaskUpdate 407, Write 313.
-- **Sub-agents**: 24 total across rust-gpu sessions. Mix: 16 Explore, 7 general-purpose, 1 Plan. **Zero in first rust-gpu session**, all 24 in the last one — clear adoption curve.
+- **Local JSONLs**: 5 surviving — Mac `a910ecaa` + `11e6e374`; Linux `4862cd6d` + `61dc0523` + `afa1ce4c`. Other 12 sessions only have prompts via `history.jsonl`.
+- **Session overlap (parallelism)**: **max 26 days** on rust-gpu (Linux `afa1ce4c` ran in parallel with Mac `11e6e374`, May 14 → Jun 8). Older 11-day overlap (Mac CCS `ca6a2dde` ↔ Mac rgpu `dd63080c`, Mar 27 → Apr 7) also stands.
+- **Token usage (available rust-gpu sessions only, both laptops)**: 431K raw input, 18.7M output, 334M cache writes, **9.52B cache reads**. Cache-read dominates by ~28×.
+- **Cost (measured via `ccusage`)**: **$3,474** across the 5 surviving rust-gpu sessions / 963 prompts ≈ **$3.61/prompt**. Projection to all 2,659 prompts: **$8.6–9.6K** for the full 15 weeks (floor — April cache bug invisible).
+- **Tool distribution (5 surviving rust-gpu sessions, ~11,900 calls)**: Bash 6,357 (~53%), Edit 2,291 (~19%), Read 1,342 (~11%), TaskUpdate 636, Write 548. Long tail: TaskCreate 322, AskUserQuestion 83, TaskOutput 75, Monitor 70, TaskStop 61, WebFetch 31, Agent 25.
+- **Sub-agents**: **25 total** across rust-gpu sessions. Mix: 16 Explore, 7 general-purpose, 1 Plan, 1 claude-code-guide. **Workflow-driven, not just model-driven**: same engineer / same model / same 26 parallel days → Mac `11e6e374` used 24, Linux `afa1ce4c` used 1.
 - **Skills**: 0 invoked via the Skill tool in available transcripts (skills came later). User mentioned `/skills` mid-CCS in March.
 - **Slash commands** (external prompts): `/install-github-app`, `/skills`, `/model`, `/context`, `/compact`. Very low total — most session control was natural language.
-- **Auto-context-compaction events** (the "this session is being continued..." marker) in 11e6e374: **8 distinct days** = ~8 hits on the 200K context window in one rolling session.
+- **Auto-context-compaction events** (the "this session is being continued..." marker) in `11e6e374`: **8 distinct days** = ~8 hits on the 200K context window in one rolling session.
 - **Memory entries**: 30+ files in `~/.claude/projects/-home-claudecode-projects/memory/` covering feedback, project state, reference. Built incrementally over rust-gpu sessions.
 
-## Slide-by-slide
+## Slide-by-slide (original 32-slide design — historical)
+
+> The shipped deck has 36 slides and the numbering does not match what's below. Use `build_deck.py` for current slide content. The original design intent below is preserved for context.
 
 1. **Title** — Evaluating AI Agent Coding for Performance Engineering / Brice Videau / ALCF / Date. Use **Title Slide** layout.
 2. **Agenda** — 5 bullets: Setup → CCS → rust-gpu/claspr → cross-cutting analysis → recommendations. (Layout: *Title, Subtitle and Bullets*)
@@ -66,3 +71,22 @@
 - Real prompts / Claude outputs from the **CCS** sessions (their JSONLs aren't on this laptop; I only have prompt-side via `history.jsonl`).
 - Real prompts from rust-gpu sessions `dd63080c` and `e493c2fd` (only prompt-side here).
 - Any photos/screenshots the user wants.
+
+## Linux-laptop merge addendum (2026-06-09)
+
+The Linux-side review pass found 10 sessions the Mac authoring missed:
+
+| Session   | Project   | Dates              | Prompts | JSONL? |
+|-----------|-----------|--------------------|---------|--------|
+| d1bcaa09  | CCS       | Mar 30 → Apr 6     |  70     | no     |
+| daf9f59c  | rust-gpu  | Apr 9              |  43     | no     |
+| b74f64ed  | rust-gpu  | Apr 12 → 16        | 215     | no     |
+| e80de831  | rust-gpu  | Apr 16 → 21        | 127     | no     |
+| da4896fe  | rust-gpu  | Apr 23 → 29        |  82     | no     |
+| a9eacbbc  | rust-gpu  | Apr 28 → 29        |  95     | no     |
+| fd509bb7  | rust-gpu  | Apr 29 → May 8     | 277     | no     |
+| 4862cd6d  | rust-gpu  | May 11             |  47     | yes    |
+| 61dc0523  | rust-gpu  | May 14             |  13     | yes    |
+| afa1ce4c  | rust-gpu  | May 14 → Jun 8     | 196     | yes    |
+
+The biggest reframe is slide 26 (sub-agent adoption): the original "0/0/0/24" curve framed adoption as model-driven. With `afa1ce4c` (Linux) running parallel to `11e6e374` (Mac) for 26 days on the same model — and using 1 vs 24 sub-agents — the story is now **workflow choice within an enabled era**, which strengthens the directing → dialogue thesis rather than weakening it.
