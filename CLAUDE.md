@@ -103,8 +103,8 @@ LibreOffice renders close to PowerPoint but not identical. Final PowerPoint revi
 | 530 / 964 user prompts | `~/.claude/history.jsonl` filtered by sessionId |
 | rust-gpu PR #3 +24,540/-595/761 files | `gh pr view 3 -R bricevideau-ai/rust-gpu --json additions,deletions,changedFiles` |
 | claspr 182 commits / ~81K LOC | `git log --oneline` and `find … -name '*.rs' \| xargs wc -l` in `~/projects/claspr` |
-| Cost figures on slide 28 ($2,505 actual, ~$1,250 without bug) | **`ccusage/` directory** — `ccusage@latest claude {session,daily,blocks} --json` snapshots; the README there explains the cache-bug estimation. **This is canonical** — do not use the per-token totals I computed in `session_stats.json` for cost. |
-| 3.5B cache reads / 141K input / 6.1M output | `ccusage/session.json` (rust-gpu sessions, summed); supersedes my earlier `session_stats.json` numbers which were double-counted |
+| Cost figures on slide 28 ($2,505 measured, $4.5–5.5K projected full project) | **`ccusage/` directory** — `ccusage@latest claude {session,daily,blocks} --json` snapshots. **This is canonical for cost** — do not use the per-token totals I computed in `session_stats.json`. The README there has the projection method. |
+| 3.5B cache reads / 141K input / 6.1M output | `ccusage/session.json` (rust-gpu sessions, summed); supersedes my earlier `session_stats.json` numbers which were double-counted. Visible-portion-only. |
 | 24 sub-agents (16 Explore, 7 general, 1 Plan) | `session_stats.json` (this metric was correct) |
 | 8 auto-compaction events | grep `"This session is being continued"` in `11e6e374-*.jsonl` |
 

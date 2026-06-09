@@ -24,35 +24,39 @@ Only the sessions whose JSONLs survived 30-day eviction. On this laptop that mea
 
 The first two are the "real" deck data; the last two are housekeeping. Slide 28 quotes the **rust-gpu surviving subset** ($2,505).
 
-## The cache-bug story (slide 28)
+## Cache cost on May–Jun days (NOT a bug, my first read was wrong)
 
-Across `daily.json`, days split cleanly into two regimes by `cache-write-cost / total-cost`:
+I initially flagged the days with high `cache-write-cost / total-cost` as "the bug" Brice mentioned, but Brice corrected me: **the bug was in April, not May**. The April-era sessions (`dd63080c`, `e493c2fd`, and CCS `ca6a2dde`) are exactly the ones whose JSONLs are evicted — so the bug is invisible to us here.
+
+What the May–Jun days actually show is normal behaviour for high-context-churn work:
 
 | Pattern | CW $ ratio | CR/CW ratio | Days |
 |---|---|---|---|
-| Healthy caching | <40% | 50–150× | May 12, 16, 26, 27 |
-| Cache bug | >70% | 8–35× | most other days (May 4, 11, 13, 14, 15, 19, 20, 28, 29, Jun 5, Jun 8) |
+| Cache reused well | <40% | 50–150× | May 12, 16, 26, 27 |
+| Lots of context churn | >70% | 8–35× | May 4, 11, 13, 14, 15, 19, 20, 28, 29, Jun 5, Jun 8 |
 
-On "bug days" the cache is being created at the same volume as it's read — i.e. it's being invalidated and rebuilt almost every turn rather than amortised across many turns. Likely root causes are TodoWrite-class tool calls or other in-context events triggering cache invalidation, but I did not isolate the exact mechanism; if you want to file a Claude Code issue, the data here is what to attach.
+The "churn" days line up with compaction events, sub-agent fan-out (each `Explore` agent reads a chunk of fresh code), or quickly-ended sessions where the cache had no time to amortise. Not a bug, just a real cost of how the work was structured.
 
-**Estimating the "without the bug" cost.** I assumed each "bad day" could have hit CR/CW = 100× (a reasonable healthy baseline; the best days hit 150×+) and subtracted the excess cache-write cost. That comes to roughly **$1,250** vs the **$2,500** actually billed — about half the bill was bug tax. Quick python that produces this number:
+## Projecting to the full timeline (slide 28)
 
 ```python
 import json
-PRICE_CW = 18.75 / 1_000_000
-with open("ccusage/daily.json") as f: d = json.load(f)
-total, ideal = 0, 0
-for day in d["daily"]:
-    cw, cr, cost = day["cacheCreationTokens"], day["cacheReadTokens"], day["totalCost"]
-    cw_pct = 100 * cw * PRICE_CW / cost if cost else 0
-    if cw_pct > 50:                                # bug-affected
-        saving = max(0, (cw - cr/100) * PRICE_CW)  # if cache had hit CR/CW=100x
-        ideal += cost - saving
-    else:
-        ideal += cost
-    total += cost
-print(f"actual ${total:.0f}, ideal ${ideal:.0f}, bug tax ${total-ideal:.0f}")
+with open("ccusage/session.json") as f: cc = json.load(f)
+# Use the 2 surviving rust-gpu sessions to derive a per-prompt rate.
+visible_cost = sum(s["totalCost"] for s in cc["sessions"]
+                   if s["sessionId"] in {"a910ecaa-c981-40a6-9c37-62be9c7688c4",
+                                         "11e6e374-f5e8-4c37-8bd1-2c629b4b6d0b"})
+visible_prompts = 87 + 620  # from session_stats.json
+rate_per_prompt = visible_cost / visible_prompts  # ≈ $3.54
+total_prompts = 1494
+# Upper bound: uniform per-prompt rate
+upper = rate_per_prompt * total_prompts          # ≈ $5.3K
+# Lower bound: CCS prompts assumed cheaper (terser PRs, less context buildup)
+lower = rate_per_prompt * 964 + 0.55*rate_per_prompt * 530  # ≈ $4.4K
+print(f"${lower:.0f}–${upper:.0f}")
 ```
+
+The April cache bug (now invisible) would have pushed the early-rust-gpu portion above this projection — so treat the $4.5–5.5K band as a **floor** for the real full-project bill.
 
 ## How the other-laptop agent should merge
 

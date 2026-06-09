@@ -622,15 +622,15 @@ set_bullets(get_ph(s, 15), [
 # --- 28. Token economics (4-block) ----------------------------------------
 s = add(9)
 set_text(get_ph(s, 0), "Token economics")
-set_text(get_ph(s, 13), "Real bill ≈ $2,500 (ccusage); a cache bug paid for about half of it")
-set_block(get_ph(s, 16), "Raw input is tiny",
-    "141K raw input tokens — prompts are short; almost all context arrives via cache reads.")
-set_block(get_ph(s, 17), "Cache reads dominate",
-    "3.5 B cache-read tokens vs 102 M cache writes vs 141 K raw input. Cache is the workhorse.")
-set_block(get_ph(s, 18), "Output is bounded",
-    "6.1 M output tokens across ~12 K assistant turns — where rate-limit pressure shows up.")
-set_block(get_ph(s, 19), "Real cost vs bug tax",
-    "$2,505 actual (2 rust-gpu sessions). On ~half the days a cache bug re-cached; without it ≈ $1,250.")
+set_text(get_ph(s, 13), "ccusage covers 47% of prompts directly; the rest is projection")
+set_block(get_ph(s, 16), "Measured (May–Jun)",
+    "$2,505 across 2 surviving rust-gpu sessions / 707 prompts. ≈ $3.54/prompt at long-dialogue rates.")
+set_block(get_ph(s, 17), "Projected total",
+    "Scaling to all 1,494 prompts: ≈ $4.5–5.5 K for the full 15 weeks. CCS prompts were terser, likely cheaper per turn.")
+set_block(get_ph(s, 18), "April cache bug",
+    "An April Claude Code caching bug inflated the early-rust-gpu sessions; magnitude lost with evicted JSONLs. Treat projection as a floor.")
+set_block(get_ph(s, 19), "Volume (visible portion)",
+    "3.5 B cache reads vs 102 M cache writes vs 141 K raw input vs 6.1 M output. Cache is the workhorse.")
 
 # --- 29. Memory system ----------------------------------------------------
 s = add(6)
