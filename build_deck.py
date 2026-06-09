@@ -285,8 +285,8 @@ s = add(4)
 set_text(get_ph(s, 0), "CCS in sixty seconds")
 set_text(get_ph(s, 13),
     "C99 library exposing autotuning configuration spaces, objective spaces, and tuners with an "
-    "ask/tell pattern. Parameters can be numerical, categorical, ordinal, or string; spaces support "
-    "conditions, forbidden clauses, expression trees, and feature contexts. Reference-counted objects, "
+    "ask/tell pattern. Parameters can be numerical, categorical, ordinal, discrete, or string; spaces "
+    "support conditions, forbidden clauses, expressions, and feature contexts. Reference-counted objects, "
     "JSON and binary serialization, Python and Ruby bindings, Kokkos profiling connector. "
     "Used by autotuning workflows where multiple frameworks need to interoperate.")
 
@@ -298,24 +298,23 @@ set_text(get_ph(s, 16), "Code")
 set_code(get_ph(s, 14),
 """import cconfigspace as ccs
 
-# 1. Define the search space
-h1 = ccs.NumericalParameter.Float(lower=-5, upper=5)
-h2 = ccs.NumericalParameter.Float(lower=-5, upper=5)
-cs = ccs.ConfigurationSpace(parameters=[h1, h2])
+# 1. Search space
+h1 = ccs.NumericalParameter.Float(name="h1", lower=-5, upper=5)
+h2 = ccs.NumericalParameter.Float(name="h2", lower=-5, upper=5)
+cs = ccs.ConfigurationSpace(name="space", parameters=[h1, h2])
 
-# 2. Define the objective
-v  = ccs.NumericalParameter.Float(...)
-os = ccs.ObjectiveSpace(parameters=[v],
-                        objectives={v: ccs.MINIMIZE})
+# 2. Objective (parser resolves "v" by parameter name)
+v  = ccs.NumericalParameter.Float(name="v", lower=-1e9, upper=1e9)
+os = ccs.ObjectiveSpace(name="obj", search_space=cs, parameters=[v],
+                        objectives={"v": ccs.ObjectiveType.MINIMIZE})
 
-# 3. Ask/tell loop
-tuner = ccs.RandomTuner(objective_space=os)
+# 3. Ask / tell loop
+tuner = ccs.RandomTuner(name="random", objective_space=os)
 for _ in range(100):
-    configs, _ = tuner.ask(1)
-    evals = [my_eval(c) for c in configs]
-    tuner.tell(evals)
+    cfgs = tuner.ask(1)
+    tuner.tell([my_eval(c) for c in cfgs])
 
-best = tuner.optima
+best = tuner.optima()
 """)
 set_text(get_ph(s, 17), "What the agent worked on")
 set_bullets(get_ph(s, 15), [
@@ -325,7 +324,24 @@ set_bullets(get_ph(s, 15), [
     "gcov-driven bug hunt across the C core",
 ])
 
-# --- 10. CCS workflow -----------------------------------------------------
+# --- 10. CCS interop story (4-block) -------------------------------------
+s = add(9)
+set_text(get_ph(s, 0), "CCS — the interop story")
+set_text(get_ph(s, 13), "Why a C library: tuners in one language, used from another")
+set_block(get_ph(s, 16), "Why CCS exists",
+    "Autotuning research and applications rarely share a language. CCS objects "
+    "(parameters, configurations, evaluations, tuners) cross the boundary as a lingua franca.")
+set_block(get_ph(s, 17), "Embedded runtime",
+    "A C application embeds Python or Ruby, calls a tuner written there, extracts the CCS "
+    "handle, then drives ask/tell from C.")
+set_block(get_ph(s, 18), "Tuner over RPC",
+    "An XML-RPC server exposes a tuner; clients in any supported language serialize "
+    "objects over the wire via a shared handle_map.")
+set_block(get_ph(s, 19), "Why it matters at ALCF",
+    "Frameworks (researchers) and apps (users) rarely share a language stack. CCS removes "
+    "that constraint without forcing either side to rewrite.")
+
+# --- 11. CCS workflow -----------------------------------------------------
 s = add(3)
 set_text(get_ph(s, 0), "CCS workflow with the agent")
 set_text(get_ph(s, 13), "Branch-per-task; PR-per-task; aggressive rebasing")
@@ -339,7 +355,7 @@ set_bullets(get_ph(s, 14), [
     "make check / make check-valgrind is the contract for green",
 ])
 
-# --- 11. CCS what landed --------------------------------------------------
+# --- 12. CCS what landed --------------------------------------------------
 s = add(5)
 set_text(get_ph(s, 0), "CCS — what landed in six weeks")
 set_text(get_ph(s, 13), "96 PRs merged on argonne-lcf/CCS by the AI persona")
@@ -359,7 +375,7 @@ set_bullets(get_ph(s, 15), [
     "Doxygen + Markdown documentation rewrites",
 ])
 
-# --- 12. CCS how I interacted (4-block) -----------------------------------
+# --- 13. CCS how I interacted (4-block) -----------------------------------
 s = add(9)
 set_text(get_ph(s, 0), "CCS — how I interacted")
 set_text(get_ph(s, 13), "Short, directive prompts; frequent corrections")
@@ -372,7 +388,7 @@ set_block(get_ph(s, 18), "Holding a quality line",
 set_block(get_ph(s, 19), "Project idioms",
     "“Could you please use CCS_REFUTE_ERR_GOTO instead?” Macros must be taught — then re-taught after each compaction.")
 
-# --- 13. CCS wins ---------------------------------------------------------
+# --- 14. CCS wins ---------------------------------------------------------
 s = add(6)
 set_text(get_ph(s, 0), "CCS — wins")
 set_text(get_ph(s, 13), "Where the agent unambiguously moved the project forward")
@@ -395,7 +411,7 @@ set_bullets(get_ph(s, 18), [
     "Critical binding bugs fixed",
 ])
 
-# --- 14. CCS pitfalls -----------------------------------------------------
+# --- 15. CCS pitfalls -----------------------------------------------------
 s = add(3)
 set_text(get_ph(s, 0), "CCS — pitfalls observed")
 set_text(get_ph(s, 13), "Even on owned code, the agent leaks bad habits unless gated")
@@ -408,11 +424,11 @@ set_bullets(get_ph(s, 14), [
     ("Mitigation: short PRs + active review + memory + CLAUDE.md", 1),
 ])
 
-# --- 15. Section break: rust-gpu/claspr -----------------------------------
+# --- 16. Section break: rust-gpu/claspr -----------------------------------
 s = add(2)
 set_text(get_ph(s, 0), "Case study 2\nrust-gpu + claspr — across a knowledge gap")
 
-# --- 16. rust-gpu/claspr 60 sec -------------------------------------------
+# --- 17. rust-gpu/claspr 60 sec -------------------------------------------
 s = add(4)
 set_text(get_ph(s, 0), "rust-gpu + claspr in sixty seconds")
 set_text(get_ph(s, 13),
@@ -423,7 +439,7 @@ set_text(get_ph(s, 13),
     "claspr is the host-side layer on top — proc-macro single-source, a typed launch wrapper, type-state safety, "
     "and a Tier 2 async chain for composing multi-stage GPU work end-to-end.")
 
-# --- 17. claspr in code (showcase) ----------------------------------------
+# --- 18. claspr in code (showcase) ----------------------------------------
 s = add(5)
 set_text(get_ph(s, 0), "claspr — single source, two callers")
 set_text(get_ph(s, 13), "Same Rust function: kernel calls it, host validates with it")
@@ -465,7 +481,7 @@ set_bullets(get_ph(s, 15), [
     "#[claspr::device] lifts the module; #[claspr::kernel] emits launchers",
 ])
 
-# --- 18. claspr depth (4-block) -------------------------------------------
+# --- 19. claspr depth (4-block) -------------------------------------------
 s = add(9)
 set_text(get_ph(s, 0), "claspr — more than a binding")
 set_text(get_ph(s, 13), "Four pieces, each load-bearing for HPC perf-eng use")
@@ -482,7 +498,7 @@ set_block(get_ph(s, 19), "Three SPIR-V modes",
     "Single-source via claspr-build, pre-compiled kernel crate, or runtime-loaded blob (clang, downloads). "
     "Typed host API decoupled from producer.")
 
-# --- 19. Knowledge-gap shift (4-block) ------------------------------------
+# --- 20. Knowledge-gap shift (4-block) ------------------------------------
 s = add(9)
 set_text(get_ph(s, 0), "The knowledge-gap shift")
 set_text(get_ph(s, 13), "Same engineer, same tool — completely different mode")
@@ -495,7 +511,7 @@ set_block(get_ph(s, 18), "What this changes",
 set_block(get_ph(s, 19), "New rhythm",
     "Explore → enumerate → discuss → decide → implement → review. Agent enumerates; engineer judges.")
 
-# --- 20. rust-gpu what landed ---------------------------------------------
+# --- 21. rust-gpu what landed ---------------------------------------------
 s = add(5)
 set_text(get_ph(s, 0), "rust-gpu + claspr — what landed")
 set_text(get_ph(s, 13), "One large fork PR + one new repository + a full test infrastructure")
@@ -516,7 +532,7 @@ set_bullets(get_ph(s, 15), [
     "Examples: collatz, raymarch, mandelbrot, sobel, image-pipeline, batch-inference",
 ])
 
-# --- 21. rust-gpu workflow ------------------------------------------------
+# --- 22. rust-gpu workflow ------------------------------------------------
 s = add(3)
 set_text(get_ph(s, 0), "rust-gpu / claspr workflow")
 set_text(get_ph(s, 13), "Branch discipline, cross-laptop handoff, upstream-aware")
@@ -530,7 +546,7 @@ set_bullets(get_ph(s, 14), [
     "claspr CI runs on rusticl/llvmpipe so reviewers can rerun",
 ])
 
-# --- 22. rust-gpu how I interacted (4-block) ------------------------------
+# --- 23. rust-gpu how I interacted (4-block) ------------------------------
 s = add(9)
 set_text(get_ph(s, 0), "rust-gpu — interaction in knowledge-gap mode")
 set_text(get_ph(s, 13), "Directive shrinks, dialogue grows")
@@ -543,7 +559,7 @@ set_block(get_ph(s, 18), "Collaborative design",
 set_block(get_ph(s, 19), "Pre-emptive context discipline",
     "“You can create a WIP document describing the design as we progress — never know when compaction will bite us.”")
 
-# --- 23. Design dialogues -------------------------------------------------
+# --- 24. Design dialogues -------------------------------------------------
 s = add(6)
 set_text(get_ph(s, 0), "Design dialogues that produced real decisions")
 set_text(get_ph(s, 13), "Cases where the agent enumerated trade-offs and I picked")
@@ -569,7 +585,7 @@ set_bullets(get_ph(s, 18), [
     "Spike scenarios kept as design docs",
 ])
 
-# --- 24. rust-gpu pitfalls ------------------------------------------------
+# --- 25. rust-gpu pitfalls ------------------------------------------------
 s = add(3)
 set_text(get_ph(s, 0), "rust-gpu / claspr — pitfalls observed")
 set_text(get_ph(s, 13), "Different failure modes when expertise is asymmetric")
@@ -582,11 +598,11 @@ set_bullets(get_ph(s, 14), [
     ("Mitigation: end sessions; preempt compaction; pin versions; memory entries", 1),
 ])
 
-# --- 25. Section break: cross-cutting -------------------------------------
+# --- 26. Section break: cross-cutting -------------------------------------
 s = add(2)
 set_text(get_ph(s, 0), "Cross-cutting analysis\nWhat the data shows across both projects")
 
-# --- 26. Tool-call distribution -------------------------------------------
+# --- 27. Tool-call distribution -------------------------------------------
 s = add(5)
 set_text(get_ph(s, 0), "Tool-call distribution")
 set_text(get_ph(s, 13), "From the 5 locally-available rust-gpu sessions (~12,000 calls)")
@@ -607,7 +623,7 @@ set_bullets(get_ph(s, 15), [
     "Write small — most output goes into existing files",
 ])
 
-# --- 27. Sub-agent adoption curve -----------------------------------------
+# --- 28. Sub-agent adoption curve -----------------------------------------
 s = add(5)
 set_text(get_ph(s, 0), "Sub-agent adoption curve")
 set_text(get_ph(s, 13), "Adoption is workflow-driven, not just model-driven")
@@ -628,7 +644,7 @@ set_bullets(get_ph(s, 15), [
     "Caveat: 30-day eviction hides Mar–Apr sessions",
 ])
 
-# --- 28. Model progression ------------------------------------------------
+# --- 29. Model progression ------------------------------------------------
 # The model itself was a moving target across the work — likely explains
 # some of the tooling-adoption drift on the prior slide.
 s = add(5)
@@ -650,7 +666,7 @@ set_bullets(get_ph(s, 15), [
     "More willing to enumerate trade-offs vs pick a default",
 ])
 
-# --- 29. Token economics (4-block) ----------------------------------------
+# --- 30. Token economics (4-block) ----------------------------------------
 s = add(9)
 set_text(get_ph(s, 0), "Token economics")
 set_text(get_ph(s, 13), "ccusage covers 36% of prompts directly; the rest is projection")
@@ -663,7 +679,7 @@ set_block(get_ph(s, 18), "April cache bug",
 set_block(get_ph(s, 19), "Volume (visible portion)",
     "9.5 B cache reads vs 334 M cache writes vs 431 K raw input vs 18.7 M output. Cache is the workhorse.")
 
-# --- 30. Memory system ----------------------------------------------------
+# --- 31. Memory system ----------------------------------------------------
 s = add(6)
 set_text(get_ph(s, 0), "Memory system in practice")
 set_text(get_ph(s, 13), "30+ entries built up; indexed by MEMORY.md")
@@ -689,7 +705,7 @@ set_bullets(get_ph(s, 18), [
     "Rusticl queue unusable after termination",
 ])
 
-# --- 31. Context-window management ----------------------------------------
+# --- 32. Context-window management ----------------------------------------
 s = add(5)
 set_text(get_ph(s, 0), "Context-window management is part of the workflow")
 set_text(get_ph(s, 13), "200K is large until it isn’t")
@@ -709,7 +725,7 @@ set_bullets(get_ph(s, 15), [
     "Sub-agents absorb cost instead of inflating context",
 ])
 
-# --- 32. Evolution CCS → claspr -------------------------------------------
+# --- 33. Evolution CCS → claspr -------------------------------------------
 s = add(5)
 set_text(get_ph(s, 0), "Evolution of interaction style")
 set_text(get_ph(s, 13), "From short directives to long design dialogues")
@@ -730,7 +746,7 @@ set_bullets(get_ph(s, 15), [
     "Pre-emptive /compact; agent enumerates, engineer picks",
 ])
 
-# --- 33. What worked best (4-block) ---------------------------------------
+# --- 34. What worked best (4-block) ---------------------------------------
 s = add(9)
 set_text(get_ph(s, 0), "What worked best")
 set_text(get_ph(s, 13), "Patterns the data and the experience agree on")
@@ -743,7 +759,7 @@ set_block(get_ph(s, 18), "Short PRs + active review",
 set_block(get_ph(s, 19), "Memory + CLAUDE.md as ground truth",
     "Survives compaction, sessions, laptops. Conventions encoded once, not re-litigated.")
 
-# --- 34. Anti-patterns (4-block) ------------------------------------------
+# --- 35. Anti-patterns (4-block) ------------------------------------------
 s = add(9)
 set_text(get_ph(s, 0), "Anti-patterns observed")
 set_text(get_ph(s, 13), "Failure modes seen at least once each")
@@ -756,7 +772,7 @@ set_block(get_ph(s, 18), "Letting the agent pick the toolchain",
 set_block(get_ph(s, 19), "Cleaning up unfamiliar patterns",
     "Agent removes spike code or workarounds it doesn’t recognize. Document intent inline first.")
 
-# --- 35. Implications -----------------------------------------------------
+# --- 36. Implications -----------------------------------------------------
 s = add(6)
 set_text(get_ph(s, 0), "Implications for performance engineering")
 set_text(get_ph(s, 13), "Where AI agents fit and where they don’t")
@@ -781,7 +797,7 @@ set_bullets(get_ph(s, 18), [
     "Single rolling session beyond a few days",
 ])
 
-# --- 36. Recommendations --------------------------------------------------
+# --- 37. Recommendations --------------------------------------------------
 s = add(3)
 set_text(get_ph(s, 0), "Recommendations — starter checklist")
 set_text(get_ph(s, 13), "If you start an agent-assisted project tomorrow")
@@ -796,7 +812,7 @@ set_bullets(get_ph(s, 14), [
     "Trust diff inspection, not CI-green, as the merge gate",
 ])
 
-# --- 37. Closing ----------------------------------------------------------
+# --- 38. Closing ----------------------------------------------------------
 add(13)
 
 pres.save(OUT)
