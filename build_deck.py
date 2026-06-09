@@ -317,7 +317,24 @@ set_text(get_ph(s, 13),
     "JSON and binary serialization, Python and Ruby bindings, Kokkos profiling connector. "
     "Used by autotuning workflows where multiple frameworks need to interoperate.")
 
-# --- 9. CCS in code (showcase) --------------------------------------------
+# --- 9. CCS interop story (4-block) --------------------------------------
+s = add(9)
+set_text(get_ph(s, 0), "CCS — the interop story")
+set_text(get_ph(s, 13), "Why a C library: tuners in one language, used from another")
+set_block(get_ph(s, 16), "Why CCS exists",
+    "Autotuning research and applications rarely share a language. CCS objects "
+    "(parameters, configurations, evaluations, tuners) cross the boundary as a lingua franca.")
+set_block(get_ph(s, 17), "Embedded runtime",
+    "A C application embeds Python or Ruby, calls a tuner written there, extracts the CCS "
+    "handle, then drives ask/tell from C.")
+set_block(get_ph(s, 18), "Tuner over RPC",
+    "An XML-RPC server exposes a tuner; clients in any supported language serialize "
+    "objects over the wire via a shared handle_map.")
+set_block(get_ph(s, 19), "Why it matters at ALCF",
+    "Frameworks (researchers) and apps (users) rarely share a language stack. CCS removes "
+    "that constraint without forcing either side to rewrite.")
+
+# --- 10. CCS in code (showcase) -------------------------------------------
 s = add(5)
 set_text(get_ph(s, 0), "CCS — what user code looks like")
 set_text(get_ph(s, 13), "Python binding; equivalent C, Ruby APIs exist")
@@ -350,23 +367,6 @@ set_bullets(get_ph(s, 15), [
     "Ruby + Python parity with the C API",
     "gcov-driven bug hunt across the C core",
 ])
-
-# --- 10. CCS interop story (4-block) -------------------------------------
-s = add(9)
-set_text(get_ph(s, 0), "CCS — the interop story")
-set_text(get_ph(s, 13), "Why a C library: tuners in one language, used from another")
-set_block(get_ph(s, 16), "Why CCS exists",
-    "Autotuning research and applications rarely share a language. CCS objects "
-    "(parameters, configurations, evaluations, tuners) cross the boundary as a lingua franca.")
-set_block(get_ph(s, 17), "Embedded runtime",
-    "A C application embeds Python or Ruby, calls a tuner written there, extracts the CCS "
-    "handle, then drives ask/tell from C.")
-set_block(get_ph(s, 18), "Tuner over RPC",
-    "An XML-RPC server exposes a tuner; clients in any supported language serialize "
-    "objects over the wire via a shared handle_map.")
-set_block(get_ph(s, 19), "Why it matters at ALCF",
-    "Frameworks (researchers) and apps (users) rarely share a language stack. CCS removes "
-    "that constraint without forcing either side to rewrite.")
 
 # --- 11. CCS workflow -----------------------------------------------------
 s = add(3)
