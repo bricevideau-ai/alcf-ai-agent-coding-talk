@@ -417,51 +417,72 @@ s = add(4)
 set_text(get_ph(s, 0), "rust-gpu + claspr in sixty seconds")
 set_text(get_ph(s, 13),
     "rust-gpu compiles Rust to SPIR-V; it targeted Vulkan only. We added the OpenCL Kernel execution model: "
-    "Physical64 addressing, mandatory OpenCL capabilities, slice decomposition into (ptr, len) pairs, "
-    "OpenCL.std math intrinsics, native CL vector types (Float4, Int8, Long16, swizzles), DebugPrintf, "
-    "subgroup and work-group collectives, storage images and samplers, atomic flags, f64 throughout. "
-    "claspr is the host-side layer on top: a #[claspr::device] proc-macro extracts a kernel sub-crate at "
-    "build time, generates a typed launch wrapper, and gives users single-source OpenCL in Rust.")
+    "Physical64 addressing, slice decomposition into (ptr, len), OpenCL.std math intrinsics, native CL vector "
+    "types (Float4, Int8, Long16, swizzles), DebugPrintf, subgroup and work-group collectives, storage images "
+    "and samplers, atomic flags, f64 throughout. "
+    "claspr is the host-side layer on top — proc-macro single-source, a typed launch wrapper, type-state safety, "
+    "and a Tier 2 async chain for composing multi-stage GPU work end-to-end.")
 
 # --- 17. claspr in code (showcase) ----------------------------------------
 s = add(5)
-set_text(get_ph(s, 0), "claspr — what user code looks like")
-set_text(get_ph(s, 13), "One Rust file: device kernel + host driver, side by side")
-set_text(get_ph(s, 16), "Code")
+set_text(get_ph(s, 0), "claspr — single source, two callers")
+set_text(get_ph(s, 13), "Same Rust function: kernel calls it, host validates with it")
+set_text(get_ph(s, 16), "Code (one file, abridged from examples/collatz)")
 set_code(get_ph(s, 14),
-"""use claspr::{Context, DeviceSlice};
-
-#[claspr::device]
+"""#[claspr::device]
 mod gpu {
+    /// Pure Rust — called from the kernel AND from the host.
+    pub fn collatz(mut n: u32) -> Option<u32> {
+        let mut i = 0;
+        while n != 1 { n = if n%2 == 0 {n/2} else {3*n+1}; i += 1; }
+        Some(i)
+    }
+
     #[claspr::kernel]
     pub fn collatz_kernel(
         #[spirv(global_invocation_id)] id: glam::USizeVec3,
         #[spirv(cross_workgroup)] data: &mut [u32],
     ) {
-        data[id.x] = collatz(data[id.x]);
+        data[id.x] = collatz(data[id.x]).unwrap_or(u32::MAX);
     }
 }
 
-fn main() -> claspr::Result<()> {
-    let ctx = Context::any()?;
-    let kernels = gpu::kernels(&ctx)?;
-    let mut h: Vec<u32> = (1..=1024).collect();
-    let mut d = DeviceSlice::<u32>::alloc_zero(&ctx, h.len())?;
-    d.write(&h).wait(&ctx)?;
-    let d = kernels.collatz_kernel([1024], d).wait(&ctx)?;
-    d.read(&mut h).wait(&ctx)?;
-    Ok(())
-}
+let kernels = gpu::kernels(&ctx)?;
+let mut h: Vec<u32> = (1..=N as u32).collect();
+let mut d = DeviceSlice::<u32>::alloc_zero(&ctx, h.len())?;
+d.write(&h).wait(&ctx)?;
+let d = kernels.collatz_kernel([N], d).wait(&ctx)?;
+d.read(&mut h).wait(&ctx)?;
+// Validate device output against the SAME function on the host.
+assert!((1..=N as u32).zip(&h).all(|(i, &n)|
+    n == gpu::collatz(i).unwrap_or(u32::MAX)));
 """)
-set_text(get_ph(s, 17), "What the macros + chain do")
+set_text(get_ph(s, 17), "Why this matters")
 set_bullets(get_ph(s, 15), [
-    "#[claspr::device] mod gpu: lifted into its own SPIR-V crate at build time",
-    "#[claspr::kernel]: marks entry point; emits typed launch wrapper",
-    ".write(&h).wait(&ctx)?: Tier 1 op + terminal wait; Tier 2 chains use .and_then(...)",
-    "Same file built twice: host (cargo) + SPIR-V (rust-gpu via build.rs)",
+    "gpu::collatz is one function: rust-gpu to SPIR-V; cargo to host",
+    "No FFI mock, no separate harness — the validator IS the impl",
+    "Single source for correctness, not just for syntax",
+    "#[claspr::device] lifts the module; #[claspr::kernel] emits launchers",
 ])
 
-# --- 18. Knowledge-gap shift (4-block) ------------------------------------
+# --- 18. claspr depth (4-block) -------------------------------------------
+s = add(9)
+set_text(get_ph(s, 0), "claspr — more than a binding")
+set_text(get_ph(s, 13), "Four pieces, each load-bearing for HPC perf-eng use")
+set_block(get_ph(s, 16), "Single-source",
+    "#[claspr::device] mod gpu lifts to a SPIR-V crate at build time. "
+    "Host calls any pub fn from the module — same code, two backends.")
+set_block(get_ph(s, 17), "Tier 1 + Tier 2 ops",
+    "Sync: buf.write(&h).wait(&ctx)?. Chain: upload!(v).and_then(|b| k.foo(b)).and_then(|b| download!(b)).sync(&ctx)?. "
+    "One event graph, no manual barriers.")
+set_block(get_ph(s, 18), "Type-state safety",
+    "Access markers (ReadOnly / WriteOnly / Frozen). Uninit wrappers keep assume_init the only unsafe. "
+    "Compile-fail suites lock invariants.")
+set_block(get_ph(s, 19), "Three SPIR-V modes",
+    "Single-source via claspr-build, pre-compiled kernel crate, or runtime-loaded blob (clang, downloads). "
+    "Typed host API decoupled from producer.")
+
+# --- 19. Knowledge-gap shift (4-block) ------------------------------------
 s = add(9)
 set_text(get_ph(s, 0), "The knowledge-gap shift")
 set_text(get_ph(s, 13), "Same engineer, same tool — completely different mode")
@@ -474,7 +495,7 @@ set_block(get_ph(s, 18), "What this changes",
 set_block(get_ph(s, 19), "New rhythm",
     "Explore → enumerate → discuss → decide → implement → review. Agent enumerates; engineer judges.")
 
-# --- 19. rust-gpu what landed ---------------------------------------------
+# --- 20. rust-gpu what landed ---------------------------------------------
 s = add(5)
 set_text(get_ph(s, 0), "rust-gpu + claspr — what landed")
 set_text(get_ph(s, 13), "One large fork PR + one new repository + a full test infrastructure")
@@ -489,13 +510,13 @@ set_bullets(get_ph(s, 14), [
 set_text(get_ph(s, 17), "claspr (greenfield)")
 set_bullets(get_ph(s, 15), [
     "182 commits, ~81K LOC of Rust",
-    "Proc-macro single-source: #[claspr::device], #[claspr::kernel]",
-    "Two-tier op model: Tier 1 ops + Tier 2 async chains",
-    "Access markers (ReadWrite/ReadOnly/Frozen/…)",
-    "Examples: raymarch, mandelbrot, sobel, image-pipeline",
+    "235 tests green on pocl + rusticl",
+    "Tier 1 / Tier 2 / compile-fail suites all CI-gated",
+    "Built-in fill kernels for non-host-writable buffers",
+    "Examples: collatz, raymarch, mandelbrot, sobel, image-pipeline, batch-inference",
 ])
 
-# --- 20. rust-gpu workflow ------------------------------------------------
+# --- 21. rust-gpu workflow ------------------------------------------------
 s = add(3)
 set_text(get_ph(s, 0), "rust-gpu / claspr workflow")
 set_text(get_ph(s, 13), "Branch discipline, cross-laptop handoff, upstream-aware")
@@ -509,7 +530,7 @@ set_bullets(get_ph(s, 14), [
     "claspr CI runs on rusticl/llvmpipe so reviewers can rerun",
 ])
 
-# --- 21. rust-gpu how I interacted (4-block) ------------------------------
+# --- 22. rust-gpu how I interacted (4-block) ------------------------------
 s = add(9)
 set_text(get_ph(s, 0), "rust-gpu — interaction in knowledge-gap mode")
 set_text(get_ph(s, 13), "Directive shrinks, dialogue grows")
@@ -522,7 +543,7 @@ set_block(get_ph(s, 18), "Collaborative design",
 set_block(get_ph(s, 19), "Pre-emptive context discipline",
     "“You can create a WIP document describing the design as we progress — never know when compaction will bite us.”")
 
-# --- 22. Design dialogues -------------------------------------------------
+# --- 23. Design dialogues -------------------------------------------------
 s = add(6)
 set_text(get_ph(s, 0), "Design dialogues that produced real decisions")
 set_text(get_ph(s, 13), "Cases where the agent enumerated trade-offs and I picked")
@@ -548,7 +569,7 @@ set_bullets(get_ph(s, 18), [
     "Spike scenarios kept as design docs",
 ])
 
-# --- 23. rust-gpu pitfalls ------------------------------------------------
+# --- 24. rust-gpu pitfalls ------------------------------------------------
 s = add(3)
 set_text(get_ph(s, 0), "rust-gpu / claspr — pitfalls observed")
 set_text(get_ph(s, 13), "Different failure modes when expertise is asymmetric")
@@ -561,11 +582,11 @@ set_bullets(get_ph(s, 14), [
     ("Mitigation: end sessions; preempt compaction; pin versions; memory entries", 1),
 ])
 
-# --- 24. Section break: cross-cutting -------------------------------------
+# --- 25. Section break: cross-cutting -------------------------------------
 s = add(2)
 set_text(get_ph(s, 0), "Cross-cutting analysis\nWhat the data shows across both projects")
 
-# --- 25. Tool-call distribution -------------------------------------------
+# --- 26. Tool-call distribution -------------------------------------------
 s = add(5)
 set_text(get_ph(s, 0), "Tool-call distribution")
 set_text(get_ph(s, 13), "From the 5 locally-available rust-gpu sessions (~12,000 calls)")
@@ -586,7 +607,7 @@ set_bullets(get_ph(s, 15), [
     "Write small — most output goes into existing files",
 ])
 
-# --- 26. Sub-agent adoption curve -----------------------------------------
+# --- 27. Sub-agent adoption curve -----------------------------------------
 s = add(5)
 set_text(get_ph(s, 0), "Sub-agent adoption curve")
 set_text(get_ph(s, 13), "Adoption is workflow-driven, not just model-driven")
@@ -607,7 +628,7 @@ set_bullets(get_ph(s, 15), [
     "Caveat: 30-day eviction hides Mar–Apr sessions",
 ])
 
-# --- 27. Model progression ------------------------------------------------
+# --- 28. Model progression ------------------------------------------------
 # The model itself was a moving target across the work — likely explains
 # some of the tooling-adoption drift on the prior slide.
 s = add(5)
@@ -629,7 +650,7 @@ set_bullets(get_ph(s, 15), [
     "More willing to enumerate trade-offs vs pick a default",
 ])
 
-# --- 28. Token economics (4-block) ----------------------------------------
+# --- 29. Token economics (4-block) ----------------------------------------
 s = add(9)
 set_text(get_ph(s, 0), "Token economics")
 set_text(get_ph(s, 13), "ccusage covers 36% of prompts directly; the rest is projection")
@@ -642,7 +663,7 @@ set_block(get_ph(s, 18), "April cache bug",
 set_block(get_ph(s, 19), "Volume (visible portion)",
     "9.5 B cache reads vs 334 M cache writes vs 431 K raw input vs 18.7 M output. Cache is the workhorse.")
 
-# --- 29. Memory system ----------------------------------------------------
+# --- 30. Memory system ----------------------------------------------------
 s = add(6)
 set_text(get_ph(s, 0), "Memory system in practice")
 set_text(get_ph(s, 13), "30+ entries built up; indexed by MEMORY.md")
@@ -668,7 +689,7 @@ set_bullets(get_ph(s, 18), [
     "Rusticl queue unusable after termination",
 ])
 
-# --- 30. Context-window management ----------------------------------------
+# --- 31. Context-window management ----------------------------------------
 s = add(5)
 set_text(get_ph(s, 0), "Context-window management is part of the workflow")
 set_text(get_ph(s, 13), "200K is large until it isn’t")
@@ -688,7 +709,7 @@ set_bullets(get_ph(s, 15), [
     "Sub-agents absorb cost instead of inflating context",
 ])
 
-# --- 31. Evolution CCS → claspr -------------------------------------------
+# --- 32. Evolution CCS → claspr -------------------------------------------
 s = add(5)
 set_text(get_ph(s, 0), "Evolution of interaction style")
 set_text(get_ph(s, 13), "From short directives to long design dialogues")
@@ -709,7 +730,7 @@ set_bullets(get_ph(s, 15), [
     "Pre-emptive /compact; agent enumerates, engineer picks",
 ])
 
-# --- 32. What worked best (4-block) ---------------------------------------
+# --- 33. What worked best (4-block) ---------------------------------------
 s = add(9)
 set_text(get_ph(s, 0), "What worked best")
 set_text(get_ph(s, 13), "Patterns the data and the experience agree on")
@@ -722,7 +743,7 @@ set_block(get_ph(s, 18), "Short PRs + active review",
 set_block(get_ph(s, 19), "Memory + CLAUDE.md as ground truth",
     "Survives compaction, sessions, laptops. Conventions encoded once, not re-litigated.")
 
-# --- 33. Anti-patterns (4-block) ------------------------------------------
+# --- 34. Anti-patterns (4-block) ------------------------------------------
 s = add(9)
 set_text(get_ph(s, 0), "Anti-patterns observed")
 set_text(get_ph(s, 13), "Failure modes seen at least once each")
@@ -735,7 +756,7 @@ set_block(get_ph(s, 18), "Letting the agent pick the toolchain",
 set_block(get_ph(s, 19), "Cleaning up unfamiliar patterns",
     "Agent removes spike code or workarounds it doesn’t recognize. Document intent inline first.")
 
-# --- 34. Implications -----------------------------------------------------
+# --- 35. Implications -----------------------------------------------------
 s = add(6)
 set_text(get_ph(s, 0), "Implications for performance engineering")
 set_text(get_ph(s, 13), "Where AI agents fit and where they don’t")
@@ -760,7 +781,7 @@ set_bullets(get_ph(s, 18), [
     "Single rolling session beyond a few days",
 ])
 
-# --- 35. Recommendations --------------------------------------------------
+# --- 36. Recommendations --------------------------------------------------
 s = add(3)
 set_text(get_ph(s, 0), "Recommendations — starter checklist")
 set_text(get_ph(s, 13), "If you start an agent-assisted project tomorrow")
@@ -775,7 +796,7 @@ set_bullets(get_ph(s, 14), [
     "Trust diff inspection, not CI-green, as the merge gate",
 ])
 
-# --- 36. Closing ----------------------------------------------------------
+# --- 37. Closing ----------------------------------------------------------
 add(13)
 
 pres.save(OUT)

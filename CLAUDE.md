@@ -1,6 +1,6 @@
 # Repo orientation for Claude — alcf-ai-agent-coding-talk
 
-This is a **36-slide** ALCF talk evaluating Brice's use of Claude Code on two projects: CCS and rust-gpu + claspr. The deck was authored on the **Arm Mac laptop** (Ubuntu environment on macOS host — `aarch64`, hostname `bvideau-VMware20-1`), then reviewed and enriched on the **native-Intel-Ubuntu laptop** on 2026-06-09 — see *Linux-laptop merge* below.
+This is a **37-slide** ALCF talk evaluating Brice's use of Claude Code on two projects: CCS and rust-gpu + claspr. The deck was authored on the **Arm Mac laptop** (Ubuntu environment on macOS host — `aarch64`, hostname `bvideau-VMware20-1`), then reviewed and enriched on the **native-Intel-Ubuntu laptop** on 2026-06-09 — see *Linux-laptop merge* below. On **2026-06-09 (afternoon)** a new claspr-depth slide was inserted after the code showcase (now slide 18; bumped what-landed → slide 20 and everything after by one).
 
 If a user prompt anywhere in the surviving session history says "the linux laptop", they mean the native-Intel-Ubuntu laptop. If they say "the mac" or "the other laptop", they mean the Arm one where this deck was originally authored.
 
@@ -32,9 +32,9 @@ After editing, `git add ai-agent-coding-alcf.pptx ai-agent-coding-alcf.pdf build
 
 **Locked in (do not change without asking):**
 - Title: *From Directing to Dialogue: Fifteen Weeks of AI Agent Coding for Performance Engineering*. Subtitle: *Two projects · 7 sessions · ~1,500 prompts*. The "directing → dialogue" framing is the thesis the rest of the deck builds on; CCS slides set up "directing", rust-gpu slides set up "dialogue". Fifteen weeks = Feb 25 → Jun 8 (CCS start to last claspr commit), not just the rust-gpu portion.
-- Slide order (Title · Agenda · Why · Setup · Side-by-side · Chronology · §CCS×7 · §rust-gpu/claspr×9 · §Cross-cutting×9 · Implications · Recommendations · Closing). Each §-block includes a "what user code looks like" showcase slide. Slide 6 is the session-chronology text-timeline that surfaces the one 11-day cross-project overlap (CCS s3 + rust-gpu s1, Mar 27 → Apr 7). Rearranging requires updating the agenda slide (#2) and §-break slides.
+- Slide order (Title · Agenda · Why · Setup · Side-by-side · Chronology · §CCS×7 · §rust-gpu/claspr×10 · §Cross-cutting×9 · Implications · Recommendations · Closing). Each §-block includes a "what user code looks like" showcase slide. The rust-gpu section also includes a 4-block depth slide (slide 18) immediately after the code showcase, covering single-source / Tier 1+2 ops / type-state safety / three SPIR-V modes. Slide 6 is the session-chronology text-timeline that surfaces the one 11-day cross-project overlap (CCS s3 + rust-gpu s1, Mar 27 → Apr 7). Rearranging requires updating the agenda slide (#2) and §-break slides.
 - ALCF template layouts only. No custom layouts, no images injected. The template's master controls fonts/colors; we do not override them — except inside the `set_block` and `set_code` helpers (see *Systemic QA issues* below).
-- 36 slides total. Sized for ~30–35 min of presenting. Slot is up to an hour including Q&A and Brice plans to add his own slides too — so don't pad this deck further; trim if you want to grow elsewhere.
+- 37 slides total. Sized for ~30–35 min of presenting. Slot is up to an hour including Q&A and Brice plans to add his own slides too — so don't pad this deck further; trim if you want to grow elsewhere.
 
 **Open for the other laptop to enrich:**
 - §CCS slides (#7–14). Built from the CCS repo + the user prompts surviving in `~/.claude/history.jsonl` only — the full session JSONLs were already evicted by Claude Code's 30-day session retention before this deck was built (see *Data availability* below). The Linux-merge pass on 2026-06-09 added one CCS session (`d1bcaa09`, 70 prompts) to the chronology but did not change §CCS slide content — its JSONL was also evicted.
