@@ -161,7 +161,7 @@ def add(layout_idx):
 
 # --- 1. Title -------------------------------------------------------------
 s = add(0)
-set_text(get_ph(s, 0), "From Directing to Dialogue: Fifteen Weeks of AI Agent Coding for Performance Engineering")
+set_text(get_ph(s, 0), "From Directing to Dialogue: 15 Weeks of AI Agent Coding for Performance Engineering")
 set_text(get_ph(s, 1), "17 sessions · 2,650 prompts · 15 weeks")
 set_text(get_ph(s, 17), "Brice Videau")
 set_text(get_ph(s, 18), "Argonne Leadership Computing Facility\nArgonne National Laboratory\nJune 2026")
