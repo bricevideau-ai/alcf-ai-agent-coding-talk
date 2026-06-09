@@ -14,6 +14,7 @@ from pptx import Presentation
 from pptx.util import Inches, Pt
 from pptx.dml.color import RGBColor
 from pptx.enum.text import PP_ALIGN
+from pptx.enum.shapes import PP_PLACEHOLDER
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 TEMPLATE = os.path.join(HERE, "ALCF Presentation Template.pptx")
@@ -39,6 +40,27 @@ def remove_placeholder(slide, idx):
         if ph.placeholder_format.idx == idx:
             sp = ph._element
             sp.getparent().remove(sp)
+            return True
+    return False
+
+def enable_slide_number(slide):
+    """Copy the layout's SLIDE_NUMBER placeholder into the slide so the
+    `<a:fld type="slidenum">` field renders the current page number.
+
+    python-pptx only inherits required placeholders into a new slide; the
+    optional slide-number placeholder must be cloned in by hand. Inherited
+    layout position + master text style are preserved automatically (the
+    cloned `<p:sp>` carries the same `<p:ph type="sldNum" idx="..."/>`,
+    so PowerPoint/LibreOffice resolve formatting from the layout).
+
+    Returns True if a number was added, False if the layout has no
+    slide-number placeholder (Title Slide, Section Break, closing layouts).
+    """
+    from copy import deepcopy
+    layout = slide.slide_layout
+    for ph in layout.placeholders:
+        if ph.placeholder_format.type == PP_PLACEHOLDER.SLIDE_NUMBER:
+            slide.shapes._spTree.append(deepcopy(ph._element))
             return True
     return False
 
@@ -157,7 +179,12 @@ pres = Presentation(TEMPLATE)
 remove_all_slides(pres)
 LAYOUTS = pres.slide_layouts
 def add(layout_idx):
-    return pres.slides.add_slide(LAYOUTS[layout_idx])
+    s = pres.slides.add_slide(LAYOUTS[layout_idx])
+    # Auto-enable slide numbering wherever the layout supports it.
+    # Title (Layout 0), Section Break (2), and Closings (13–15) have no
+    # slide-number placeholder, so enable_slide_number is a no-op there.
+    enable_slide_number(s)
+    return s
 
 # --- 1. Title -------------------------------------------------------------
 s = add(0)
