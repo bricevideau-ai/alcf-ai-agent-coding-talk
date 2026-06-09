@@ -622,15 +622,15 @@ set_bullets(get_ph(s, 15), [
 # --- 28. Token economics (4-block) ----------------------------------------
 s = add(9)
 set_text(get_ph(s, 0), "Token economics")
-set_text(get_ph(s, 13), "The cache dominates the bill")
+set_text(get_ph(s, 13), "Real bill ≈ $2,500 (ccusage); a cache bug paid for about half of it")
 set_block(get_ph(s, 16), "Raw input is tiny",
-    "273K input tokens total — prompts are short, most context is reused from the cache.")
+    "141K raw input tokens — prompts are short; almost all context arrives via cache reads.")
 set_block(get_ph(s, 17), "Cache reads dominate",
-    "7.18 BILLION cache-read tokens. ~96% effective cache hit rate on incoming context.")
-set_block(get_ph(s, 18), "Output is significant but bounded",
-    "15.5M output tokens, ~12,000 assistant turns, ~1.3K tokens each — rate-limit pressure.")
-set_block(get_ph(s, 19), "Cost ceiling vs real cost",
-    "Naive Opus ceiling: ~$16.7K for both sessions. Actual much lower (Sonnet + cache-read pricing).")
+    "3.5 B cache-read tokens vs 102 M cache writes vs 141 K raw input. Cache is the workhorse.")
+set_block(get_ph(s, 18), "Output is bounded",
+    "6.1 M output tokens across ~12 K assistant turns — where rate-limit pressure shows up.")
+set_block(get_ph(s, 19), "Real cost vs bug tax",
+    "$2,505 actual (2 rust-gpu sessions). On ~half the days a cache bug re-cached; without it ≈ $1,250.")
 
 # --- 29. Memory system ----------------------------------------------------
 s = add(6)

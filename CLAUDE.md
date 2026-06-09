@@ -38,7 +38,7 @@ After editing, `git add ai-agent-coding-alcf.pptx ai-agent-coding-alcf.pdf build
 
 **Open for the other laptop to enrich:**
 - §CCS slides (#7–14). Built from the CCS repo + the user prompts surviving in `~/.claude/history.jsonl` only — the full session JSONLs were already evicted by Claude Code's 30-day session retention before this deck was built (see *Data availability* below). If the other laptop has surviving artifacts (e.g. local notes, screenshots, anything else), those are net-new and worth adding.
-- Slides #25–28 (tool-call distribution / sub-agent adoption / model progression / token economics): currently aggregated from **only the two locally-surviving rust-gpu sessions** (a910ecaa, 11e6e374). If the other laptop has additional surviving session JSONLs, re-mine via the script-style code at the bottom of this file and *merge* into `session_stats.json` (see its `merge_instructions` field for the rules), then update the slide numbers in build_deck.py.
+- Slides #25–28 (tool-call distribution / sub-agent adoption / model progression / token economics): currently aggregated from **only the two locally-surviving rust-gpu sessions** (a910ecaa, 11e6e374). For tool/sub-agent counts use the merge recipe at the bottom; **for cost, use ccusage** (see `ccusage/README.md`).
 - Quotes on slides #12 and #21 are paraphrased lightly from real user prompts; verbatim alternatives are fine.
 - Code showcases (#8 CCS, #16 claspr): trimmed examples; longer or different illustrative snippets are fine if they fit at 9pt Consolas in the left column.
 - Chronology slide (#6) is text-based monospace ASCII. If the other-laptop session list (within its 30-day window) reveals any I missed, add a row and update the parallelism caption.
@@ -103,8 +103,9 @@ LibreOffice renders close to PowerPoint but not identical. Final PowerPoint revi
 | 530 / 964 user prompts | `~/.claude/history.jsonl` filtered by sessionId |
 | rust-gpu PR #3 +24,540/-595/761 files | `gh pr view 3 -R bricevideau-ai/rust-gpu --json additions,deletions,changedFiles` |
 | claspr 182 commits / ~81K LOC | `git log --oneline` and `find … -name '*.rs' \| xargs wc -l` in `~/projects/claspr` |
-| 7.18B cache reads / 273K input / 15.5M output | aggregated from the 2 surviving rust-gpu JSONLs; see `session_stats.json` |
-| 24 sub-agents (16 Explore, 7 general, 1 Plan) | same |
+| Cost figures on slide 28 ($2,505 actual, ~$1,250 without bug) | **`ccusage/` directory** — `ccusage@latest claude {session,daily,blocks} --json` snapshots; the README there explains the cache-bug estimation. **This is canonical** — do not use the per-token totals I computed in `session_stats.json` for cost. |
+| 3.5B cache reads / 141K input / 6.1M output | `ccusage/session.json` (rust-gpu sessions, summed); supersedes my earlier `session_stats.json` numbers which were double-counted |
+| 24 sub-agents (16 Explore, 7 general, 1 Plan) | `session_stats.json` (this metric was correct) |
 | 8 auto-compaction events | grep `"This session is being continued"` in `11e6e374-*.jsonl` |
 
 If you re-mine on the other laptop, **merge into** `session_stats.json` (don't overwrite — read its `merge_instructions` field for the rules: same-session data union, prefer newer/larger transcripts). Then update slide-level numbers in `build_deck.py` and rebuild.
