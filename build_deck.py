@@ -493,8 +493,8 @@ mod gpu {
 let kernels = gpu::kernels(&ctx)?;
 let mut h: Vec<u32> = (1..=N as u32).collect();
 let d = DeviceSlice::from_slice(&ctx, &h)?;
-let d = kernels.collatz_kernel([N], d).wait(&ctx)?;
-d.read(&mut h).wait(&ctx)?;
+let d = kernels.collatz_kernel([N], d).wait()?;
+d.read(&mut h).wait()?;
 // Validate device output against the SAME function on the host.
 assert!((1..=N as u32).zip(&h).all(|(i, &n)|
     n == gpu::collatz(i).unwrap_or(u32::MAX)));
@@ -515,7 +515,7 @@ set_block(get_ph(s, 16), "Single-source",
     "#[claspr::device] mod gpu lifts to a SPIR-V crate at build time. "
     "Host calls any pub fn from the module — same code, two backends.")
 set_block(get_ph(s, 17), "Tier 1 + Tier 2 ops",
-    "Sync: buf.write(&h).wait(&ctx)?. Chain: upload!(v).and_then(|b| k.foo(b)).and_then(|b| download!(b)).sync(&ctx)?. "
+    "Sync: buf.write(&h).wait()?. Chain: upload!(v).and_then(|b| k.foo(b)).and_then(|b| download!(b)).sync(&ctx)?. "
     "One event graph, no manual barriers.")
 set_block(get_ph(s, 18), "Type-state safety",
     "Access markers (ReadOnly / WriteOnly / Frozen). Uninit wrappers keep assume_init the only unsafe. "
@@ -607,7 +607,7 @@ set_text(get_ph(s, 19), "Abstractions")
 set_bullets(get_ph(s, 18), [
     "Tier 1 (ops) decoupled from Tier 2 (async)",
     "KernelOp trait so proc-macro stays light",
-    "Late-bind launcher: buf.write(&data).wait(&ctx)?",
+    "Late-bind launcher: buf.write(&data).wait()?",
     "Spike scenarios kept as design docs",
 ])
 
