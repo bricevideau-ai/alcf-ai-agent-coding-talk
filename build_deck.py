@@ -272,9 +272,9 @@ Mac    rgpu 11e6e374  *                                             [===========
 Linux  rgpu 61dc0523  *                                              |
 Linux  rgpu afa1ce4c  *                                              [=======================]
 
-  [ ]/| = active session     * = full JSONL on disk (others: history.jsonl prompts survive 30-day eviction)
-  Max overlap: 26d on rust-gpu (afa1ce4c Linux  /  11e6e374 Mac, May 14 → Jun 8)
-""", size=7)
+  [ ]/| = active session   * = full JSONL on disk (others: prompts only, 30-day eviction)
+  Max overlap: 26d on rust-gpu (afa1ce4c Linux / 11e6e374 Mac, May 14 → Jun 8)
+""", size=12)
 
 # --- 7. Section break: CCS ------------------------------------------------
 s = add(2)
