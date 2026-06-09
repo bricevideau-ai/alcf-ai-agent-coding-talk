@@ -1,7 +1,11 @@
 {
-  "schema_version": 2,
-  "generated_at": "2026-06-08",
-  "generated_on_laptop": "arm-mac-ubuntu",
+  "schema_version": 3,
+  "generated_at": "2026-06-09",
+  "generated_on_laptop": "linux-intel-ubuntu",
+  "merge_history": [
+    "arm-mac-ubuntu@2026-06-08",
+    "linux-intel-ubuntu@2026-06-09"
+  ],
   "merge_instructions": "This file aggregates Claude Code session metrics for the talk. When the native-Intel-Ubuntu laptop runs, it should: (1) re-mine its OWN surviving session JSONLs the same way (see build_deck.py or the Python snippets in CLAUDE.md), (2) for any session sid that appears in BOTH this file and the other laptop with available=true, prefer the other laptop's data (it's a strict superset if both retain the same session \u2014 JSONLs are append-only). For sessions where one laptop has available=true and the other has available=false, keep the available data. Then regenerate the project totals + the deck slides 24/25/26/27 numbers.",
   "by_session": {
     "3f086a62-e6e8-4f09-bced-e0d5cd469b0d": {
@@ -25,7 +29,8 @@
       "tool_uses_top": {},
       "slash_commands": {},
       "skills_used": {},
-      "model_uses": {}
+      "model_uses": {},
+      "host": "arm-mac-ubuntu"
     },
     "add0d69f-2382-4a2b-8b1f-3a04f77798bc": {
       "project": "ccs",
@@ -48,7 +53,8 @@
       "tool_uses_top": {},
       "slash_commands": {},
       "skills_used": {},
-      "model_uses": {}
+      "model_uses": {},
+      "host": "arm-mac-ubuntu"
     },
     "ca6a2dde-0561-4758-944d-585a5515040d": {
       "project": "ccs",
@@ -71,7 +77,8 @@
       "tool_uses_top": {},
       "slash_commands": {},
       "skills_used": {},
-      "model_uses": {}
+      "model_uses": {},
+      "host": "arm-mac-ubuntu"
     },
     "dd63080c-8cbd-4f75-b01b-a8491e84741a": {
       "project": "rust-gpu",
@@ -94,7 +101,8 @@
       "tool_uses_top": {},
       "slash_commands": {},
       "skills_used": {},
-      "model_uses": {}
+      "model_uses": {},
+      "host": "arm-mac-ubuntu"
     },
     "e493c2fd-b710-481e-b8e0-2ce070f80311": {
       "project": "rust-gpu",
@@ -117,7 +125,8 @@
       "tool_uses_top": {},
       "slash_commands": {},
       "skills_used": {},
-      "model_uses": {}
+      "model_uses": {},
+      "host": "arm-mac-ubuntu"
     },
     "a910ecaa-c981-40a6-9c37-62be9c7688c4": {
       "project": "rust-gpu",
@@ -157,7 +166,8 @@
       "skills_used": {},
       "model_uses": {
         "claude-opus-4-7": 1747
-      }
+      },
+      "host": "arm-mac-ubuntu"
     },
     "11e6e374-f5e8-4c37-8bd1-2c629b4b6d0b": {
       "project": "rust-gpu",
@@ -205,16 +215,300 @@
       "model_uses": {
         "claude-opus-4-7": 12220,
         "<synthetic>": 2
-      }
+      },
+      "host": "arm-mac-ubuntu"
+    },
+    "d1bcaa09-f36b-436e-8a75-e9a8cca5d88f": {
+      "project": "ccs",
+      "session_id": "d1bcaa09-f36b-436e-8a75-e9a8cca5d88f",
+      "host": "linux-intel-ubuntu",
+      "available_locally": false,
+      "prompt_count_from_history": 70,
+      "first_date": "2026-03-30",
+      "last_date": "2026-04-06",
+      "first_ts_utc": "2026-03-30 14:55",
+      "last_ts_utc": "2026-04-06 22:55",
+      "duration_hours_wallclock": 176.0,
+      "user_msgs": 0,
+      "assistant_msgs": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 0,
+      "subagent_calls": 0,
+      "subagent_types": {},
+      "tool_uses_top": {},
+      "model_uses": {},
+      "slash_commands": {},
+      "skills_used": {}
+    },
+    "daf9f59c-49be-4ec1-9bca-b0aea98c56d3": {
+      "project": "rust-gpu",
+      "session_id": "daf9f59c-49be-4ec1-9bca-b0aea98c56d3",
+      "host": "linux-intel-ubuntu",
+      "available_locally": false,
+      "prompt_count_from_history": 43,
+      "first_date": "2026-04-09",
+      "last_date": "2026-04-09",
+      "first_ts_utc": "2026-04-09 16:32",
+      "last_ts_utc": "2026-04-09 23:21",
+      "duration_hours_wallclock": 6.8,
+      "user_msgs": 0,
+      "assistant_msgs": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 0,
+      "subagent_calls": 0,
+      "subagent_types": {},
+      "tool_uses_top": {},
+      "model_uses": {},
+      "slash_commands": {},
+      "skills_used": {}
+    },
+    "b74f64ed-aeca-4a6b-bc1d-fb79d812f0b7": {
+      "project": "rust-gpu",
+      "session_id": "b74f64ed-aeca-4a6b-bc1d-fb79d812f0b7",
+      "host": "linux-intel-ubuntu",
+      "available_locally": false,
+      "prompt_count_from_history": 215,
+      "first_date": "2026-04-12",
+      "last_date": "2026-04-16",
+      "first_ts_utc": "2026-04-12 00:26",
+      "last_ts_utc": "2026-04-16 06:17",
+      "duration_hours_wallclock": 101.8,
+      "user_msgs": 0,
+      "assistant_msgs": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 0,
+      "subagent_calls": 0,
+      "subagent_types": {},
+      "tool_uses_top": {},
+      "model_uses": {},
+      "slash_commands": {},
+      "skills_used": {}
+    },
+    "e80de831-11f5-45ec-9af7-f7d44ff656d5": {
+      "project": "rust-gpu",
+      "session_id": "e80de831-11f5-45ec-9af7-f7d44ff656d5",
+      "host": "linux-intel-ubuntu",
+      "available_locally": false,
+      "prompt_count_from_history": 127,
+      "first_date": "2026-04-16",
+      "last_date": "2026-04-21",
+      "first_ts_utc": "2026-04-16 06:29",
+      "last_ts_utc": "2026-04-21 20:13",
+      "duration_hours_wallclock": 133.7,
+      "user_msgs": 0,
+      "assistant_msgs": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 0,
+      "subagent_calls": 0,
+      "subagent_types": {},
+      "tool_uses_top": {},
+      "model_uses": {},
+      "slash_commands": {},
+      "skills_used": {}
+    },
+    "da4896fe-0b37-47cc-8293-315a08fcfc7c": {
+      "project": "rust-gpu",
+      "session_id": "da4896fe-0b37-47cc-8293-315a08fcfc7c",
+      "host": "linux-intel-ubuntu",
+      "available_locally": false,
+      "prompt_count_from_history": 82,
+      "first_date": "2026-04-23",
+      "last_date": "2026-04-29",
+      "first_ts_utc": "2026-04-23 14:42",
+      "last_ts_utc": "2026-04-29 09:27",
+      "duration_hours_wallclock": 138.8,
+      "user_msgs": 0,
+      "assistant_msgs": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 0,
+      "subagent_calls": 0,
+      "subagent_types": {},
+      "tool_uses_top": {},
+      "model_uses": {},
+      "slash_commands": {},
+      "skills_used": {}
+    },
+    "a9eacbbc-9525-47f6-8a67-645e1ebe62ae": {
+      "project": "rust-gpu",
+      "session_id": "a9eacbbc-9525-47f6-8a67-645e1ebe62ae",
+      "host": "linux-intel-ubuntu",
+      "available_locally": false,
+      "prompt_count_from_history": 95,
+      "first_date": "2026-04-28",
+      "last_date": "2026-04-29",
+      "first_ts_utc": "2026-04-28 13:39",
+      "last_ts_utc": "2026-04-29 11:19",
+      "duration_hours_wallclock": 21.7,
+      "user_msgs": 0,
+      "assistant_msgs": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 0,
+      "subagent_calls": 0,
+      "subagent_types": {},
+      "tool_uses_top": {},
+      "model_uses": {},
+      "slash_commands": {},
+      "skills_used": {}
+    },
+    "fd509bb7-6aee-48cc-8a6e-ad5d1cd6ee31": {
+      "project": "rust-gpu",
+      "session_id": "fd509bb7-6aee-48cc-8a6e-ad5d1cd6ee31",
+      "host": "linux-intel-ubuntu",
+      "available_locally": false,
+      "prompt_count_from_history": 277,
+      "first_date": "2026-04-29",
+      "last_date": "2026-05-08",
+      "first_ts_utc": "2026-04-29 11:19",
+      "last_ts_utc": "2026-05-08 22:04",
+      "duration_hours_wallclock": 226.7,
+      "user_msgs": 0,
+      "assistant_msgs": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 0,
+      "subagent_calls": 0,
+      "subagent_types": {},
+      "tool_uses_top": {},
+      "model_uses": {},
+      "slash_commands": {},
+      "skills_used": {}
+    },
+    "4862cd6d-3275-4747-9720-e15002de1ca8": {
+      "project": "rust-gpu",
+      "session_id": "4862cd6d-3275-4747-9720-e15002de1ca8",
+      "host": "linux-intel-ubuntu",
+      "available_locally": true,
+      "prompt_count_from_history": 47,
+      "first_ts_utc": "2026-05-11 15:42",
+      "last_ts_utc": "2026-05-11 23:44",
+      "first_date": "2026-05-11",
+      "last_date": "2026-05-11",
+      "duration_hours_wallclock": 8.0,
+      "user_msgs": 735,
+      "assistant_msgs": 1096,
+      "input_tokens": 141069,
+      "output_tokens": 1201614,
+      "cache_creation_tokens": 14728153,
+      "cache_read_tokens": 415651619,
+      "subagent_calls": 0,
+      "subagent_types": {},
+      "tool_uses_top": {
+        "Bash": 373,
+        "Write": 111,
+        "Read": 74,
+        "Edit": 71,
+        "TaskUpdate": 36,
+        "TaskCreate": 18,
+        "AskUserQuestion": 4,
+        "WebFetch": 1,
+        "TaskList": 1
+      },
+      "model_uses": {
+        "claude-opus-4-7": 1096
+      },
+      "slash_commands": {},
+      "skills_used": {}
+    },
+    "61dc0523-4aa0-477c-a259-9fa4820d72e9": {
+      "project": "rust-gpu",
+      "session_id": "61dc0523-4aa0-477c-a259-9fa4820d72e9",
+      "host": "linux-intel-ubuntu",
+      "available_locally": true,
+      "prompt_count_from_history": 13,
+      "first_ts_utc": "2026-05-14 15:05",
+      "last_ts_utc": "2026-05-14 17:55",
+      "first_date": "2026-05-14",
+      "last_date": "2026-05-14",
+      "duration_hours_wallclock": 2.8,
+      "user_msgs": 140,
+      "assistant_msgs": 244,
+      "input_tokens": 359,
+      "output_tokens": 250881,
+      "cache_creation_tokens": 2077185,
+      "cache_read_tokens": 36536016,
+      "subagent_calls": 0,
+      "subagent_types": {},
+      "tool_uses_top": {
+        "Bash": 59,
+        "Read": 37,
+        "Edit": 27,
+        "TaskOutput": 3,
+        "Write": 2,
+        "AskUserQuestion": 1
+      },
+      "model_uses": {
+        "claude-opus-4-7": 244
+      },
+      "slash_commands": {},
+      "skills_used": {}
+    },
+    "afa1ce4c-4ddf-4b31-bf82-7d5eef2742ac": {
+      "project": "rust-gpu",
+      "session_id": "afa1ce4c-4ddf-4b31-bf82-7d5eef2742ac",
+      "host": "linux-intel-ubuntu",
+      "available_locally": true,
+      "prompt_count_from_history": 196,
+      "first_ts_utc": "2026-05-14 19:33",
+      "last_ts_utc": "2026-06-08 20:26",
+      "first_date": "2026-05-14",
+      "last_date": "2026-06-08",
+      "duration_hours_wallclock": 600.9,
+      "user_msgs": 2898,
+      "assistant_msgs": 4299,
+      "input_tokens": 16346,
+      "output_tokens": 1735378,
+      "cache_creation_tokens": 63493011,
+      "cache_read_tokens": 1888559414,
+      "subagent_calls": 1,
+      "subagent_types": {
+        "claude-code-guide": 1
+      },
+      "tool_uses_top": {
+        "Bash": 1494,
+        "Edit": 435,
+        "Read": 348,
+        "TaskUpdate": 171,
+        "Write": 83,
+        "TaskCreate": 80,
+        "TaskOutput": 26,
+        "AskUserQuestion": 17,
+        "TaskList": 10,
+        "WebFetch": 7,
+        "Monitor": 6,
+        "WebSearch": 4,
+        "Agent": 1,
+        "TaskStop": 1,
+        "EnterPlanMode": 1,
+        "ExitPlanMode": 1
+      },
+      "model_uses": {
+        "claude-opus-4-7": 4292,
+        "<synthetic>": 7
+      },
+      "slash_commands": {},
+      "skills_used": {}
     }
   },
   "by_project": {
     "ccs": {
       "first_date": "2026-02-25",
       "last_date": "2026-04-07",
-      "sessions_total": 3,
+      "sessions_total": 4,
       "sessions_available_locally": 0,
-      "prompt_count_from_history": 530,
+      "prompt_count_from_history": 600,
       "user_msgs_from_jsonls": 0,
       "assistant_msgs_from_jsonls": 0,
       "input_tokens": 0,
@@ -226,53 +520,57 @@
       "subagent_types": {},
       "model_uses": {},
       "slash_commands": {},
-      "skills_used": {},
-      "est_cost_opus_pricing_usd": 0.0
+      "skills_used": {}
     },
     "rust-gpu": {
       "first_date": "2026-03-27",
       "last_date": "2026-06-08",
-      "sessions_total": 4,
-      "sessions_available_locally": 2,
-      "prompt_count_from_history": 964,
-      "user_msgs_from_jsonls": 891,
-      "assistant_msgs_from_jsonls": 13969,
-      "input_tokens": 273714,
-      "output_tokens": 15502066,
-      "cache_creation_tokens": 253740850,
-      "cache_read_tokens": 7175793452,
-      "subagent_calls": 24,
+      "sessions_total": 13,
+      "sessions_available_locally": 5,
+      "prompt_count_from_history": 2059,
+      "user_msgs_from_jsonls": 4664,
+      "assistant_msgs_from_jsonls": 19608,
+      "input_tokens": 431488,
+      "output_tokens": 18689939,
+      "cache_creation_tokens": 334039199,
+      "cache_read_tokens": 9516540501,
+      "subagent_calls": 25,
       "tool_uses_top": {
-        "Bash": 4431,
-        "Edit": 1758,
-        "Read": 883,
-        "TaskUpdate": 429,
-        "Write": 352,
-        "TaskCreate": 224,
-        "Monitor": 64,
-        "AskUserQuestion": 61,
-        "TaskStop": 60,
-        "TaskOutput": 46,
-        "Agent": 24,
-        "WebFetch": 23,
-        "ExitPlanMode": 18,
-        "EnterPlanMode": 11,
-        "TaskList": 11
+        "Bash": 6357,
+        "Edit": 2291,
+        "Read": 1342,
+        "TaskUpdate": 636,
+        "Write": 548,
+        "TaskCreate": 322,
+        "AskUserQuestion": 83,
+        "TaskOutput": 75,
+        "Monitor": 70,
+        "TaskStop": 61,
+        "WebFetch": 31,
+        "Agent": 25,
+        "TaskList": 22,
+        "ExitPlanMode": 19,
+        "EnterPlanMode": 12,
+        "WebSearch": 4,
+        "ScheduleWakeup": 1,
+        "CronList": 1,
+        "CronDelete": 1
       },
       "subagent_types": {
         "general-purpose": 7,
         "Explore": 16,
-        "Plan": 1
+        "Plan": 1,
+        "claude-code-guide": 1
       },
       "model_uses": {
-        "claude-opus-4-7": 13967,
-        "<synthetic>": 2
+        "claude-opus-4-7": 19599,
+        "<synthetic>": 9
       },
       "slash_commands": {
         "//": 1
       },
       "skills_used": {},
-      "est_cost_opus_pricing_usd": 16688.09
+      "measured_cost_ccusage_usd": 3474.12
     }
   },
   "session_chronology": [
@@ -282,6 +580,7 @@
       "project": "ccs",
       "session_id": "3f086a62-e6e8-4f09-bced-e0d5cd469b0d",
       "short_id": "3f086a62",
+      "host": "arm-mac-ubuntu",
       "available_locally": false,
       "duration_hours": 282.7,
       "prompt_count_from_history": 119
@@ -292,6 +591,7 @@
       "project": "ccs",
       "session_id": "add0d69f-2382-4a2b-8b1f-3a04f77798bc",
       "short_id": "add0d69f",
+      "host": "arm-mac-ubuntu",
       "available_locally": false,
       "duration_hours": 428.7,
       "prompt_count_from_history": 161
@@ -302,6 +602,7 @@
       "project": "ccs",
       "session_id": "ca6a2dde-0561-4758-944d-585a5515040d",
       "short_id": "ca6a2dde",
+      "host": "arm-mac-ubuntu",
       "available_locally": false,
       "duration_hours": 265.3,
       "prompt_count_from_history": 250
@@ -312,9 +613,21 @@
       "project": "rust-gpu",
       "session_id": "dd63080c-8cbd-4f75-b01b-a8491e84741a",
       "short_id": "dd63080c",
+      "host": "arm-mac-ubuntu",
       "available_locally": false,
       "duration_hours": 264.1,
       "prompt_count_from_history": 23
+    },
+    {
+      "first_date": "2026-03-30",
+      "last_date": "2026-04-06",
+      "project": "ccs",
+      "session_id": "d1bcaa09-f36b-436e-8a75-e9a8cca5d88f",
+      "short_id": "d1bcaa09",
+      "host": "linux-intel-ubuntu",
+      "available_locally": false,
+      "duration_hours": 176.0,
+      "prompt_count_from_history": 70
     },
     {
       "first_date": "2026-04-07",
@@ -322,9 +635,76 @@
       "project": "rust-gpu",
       "session_id": "e493c2fd-b710-481e-b8e0-2ce070f80311",
       "short_id": "e493c2fd",
+      "host": "arm-mac-ubuntu",
       "available_locally": false,
       "duration_hours": 414.5,
       "prompt_count_from_history": 234
+    },
+    {
+      "first_date": "2026-04-09",
+      "last_date": "2026-04-09",
+      "project": "rust-gpu",
+      "session_id": "daf9f59c-49be-4ec1-9bca-b0aea98c56d3",
+      "short_id": "daf9f59c",
+      "host": "linux-intel-ubuntu",
+      "available_locally": false,
+      "duration_hours": 6.8,
+      "prompt_count_from_history": 43
+    },
+    {
+      "first_date": "2026-04-12",
+      "last_date": "2026-04-16",
+      "project": "rust-gpu",
+      "session_id": "b74f64ed-aeca-4a6b-bc1d-fb79d812f0b7",
+      "short_id": "b74f64ed",
+      "host": "linux-intel-ubuntu",
+      "available_locally": false,
+      "duration_hours": 101.8,
+      "prompt_count_from_history": 215
+    },
+    {
+      "first_date": "2026-04-16",
+      "last_date": "2026-04-21",
+      "project": "rust-gpu",
+      "session_id": "e80de831-11f5-45ec-9af7-f7d44ff656d5",
+      "short_id": "e80de831",
+      "host": "linux-intel-ubuntu",
+      "available_locally": false,
+      "duration_hours": 133.7,
+      "prompt_count_from_history": 127
+    },
+    {
+      "first_date": "2026-04-23",
+      "last_date": "2026-04-29",
+      "project": "rust-gpu",
+      "session_id": "da4896fe-0b37-47cc-8293-315a08fcfc7c",
+      "short_id": "da4896fe",
+      "host": "linux-intel-ubuntu",
+      "available_locally": false,
+      "duration_hours": 138.8,
+      "prompt_count_from_history": 82
+    },
+    {
+      "first_date": "2026-04-28",
+      "last_date": "2026-04-29",
+      "project": "rust-gpu",
+      "session_id": "a9eacbbc-9525-47f6-8a67-645e1ebe62ae",
+      "short_id": "a9eacbbc",
+      "host": "linux-intel-ubuntu",
+      "available_locally": false,
+      "duration_hours": 21.7,
+      "prompt_count_from_history": 95
+    },
+    {
+      "first_date": "2026-04-29",
+      "last_date": "2026-05-08",
+      "project": "rust-gpu",
+      "session_id": "fd509bb7-6aee-48cc-8a6e-ad5d1cd6ee31",
+      "short_id": "fd509bb7",
+      "host": "linux-intel-ubuntu",
+      "available_locally": false,
+      "duration_hours": 226.7,
+      "prompt_count_from_history": 277
     },
     {
       "first_date": "2026-05-04",
@@ -332,9 +712,21 @@
       "project": "rust-gpu",
       "session_id": "a910ecaa-c981-40a6-9c37-62be9c7688c4",
       "short_id": "a910ecaa",
+      "host": "arm-mac-ubuntu",
       "available_locally": true,
       "duration_hours": 216.5,
       "prompt_count_from_history": 87
+    },
+    {
+      "first_date": "2026-05-11",
+      "last_date": "2026-05-11",
+      "project": "rust-gpu",
+      "session_id": "4862cd6d-3275-4747-9720-e15002de1ca8",
+      "short_id": "4862cd6d",
+      "host": "linux-intel-ubuntu",
+      "available_locally": true,
+      "duration_hours": 8.0,
+      "prompt_count_from_history": 47
     },
     {
       "first_date": "2026-05-13",
@@ -342,10 +734,144 @@
       "project": "rust-gpu",
       "session_id": "11e6e374-f5e8-4c37-8bd1-2c629b4b6d0b",
       "short_id": "11e6e374",
+      "host": "arm-mac-ubuntu",
       "available_locally": true,
       "duration_hours": 629.2,
       "prompt_count_from_history": 620
+    },
+    {
+      "first_date": "2026-05-14",
+      "last_date": "2026-05-14",
+      "project": "rust-gpu",
+      "session_id": "61dc0523-4aa0-477c-a259-9fa4820d72e9",
+      "short_id": "61dc0523",
+      "host": "linux-intel-ubuntu",
+      "available_locally": true,
+      "duration_hours": 2.8,
+      "prompt_count_from_history": 13
+    },
+    {
+      "first_date": "2026-05-14",
+      "last_date": "2026-06-08",
+      "project": "rust-gpu",
+      "session_id": "afa1ce4c-4ddf-4b31-bf82-7d5eef2742ac",
+      "short_id": "afa1ce4c",
+      "host": "linux-intel-ubuntu",
+      "available_locally": true,
+      "duration_hours": 600.9,
+      "prompt_count_from_history": 196
     }
   ],
-  "parallelism_note": "CCS session ca6a2dde (Mar 27 \u2192 Apr 7) and rust-gpu session dd63080c (Mar 27 \u2192 Apr 7) ran in parallel \u2014 same days, different sessions. Sessions are per-project, never cross-project."
+  "overlaps_top": [
+    {
+      "days": 26,
+      "a": "11e6e374",
+      "a_proj": "rust-gpu",
+      "a_host": "arm-mac-ubuntu",
+      "b": "afa1ce4c",
+      "b_proj": "rust-gpu",
+      "b_host": "linux-intel-ubuntu",
+      "start": "2026-05-14",
+      "end": "2026-06-08"
+    },
+    {
+      "days": 12,
+      "a": "ca6a2dde",
+      "a_proj": "ccs",
+      "a_host": "arm-mac-ubuntu",
+      "b": "dd63080c",
+      "b_proj": "rust-gpu",
+      "b_host": "arm-mac-ubuntu",
+      "start": "2026-03-27",
+      "end": "2026-04-07"
+    },
+    {
+      "days": 8,
+      "a": "dd63080c",
+      "a_proj": "rust-gpu",
+      "a_host": "arm-mac-ubuntu",
+      "b": "d1bcaa09",
+      "b_proj": "ccs",
+      "b_host": "linux-intel-ubuntu",
+      "start": "2026-03-30",
+      "end": "2026-04-06"
+    },
+    {
+      "days": 8,
+      "a": "ca6a2dde",
+      "a_proj": "ccs",
+      "a_host": "arm-mac-ubuntu",
+      "b": "d1bcaa09",
+      "b_proj": "ccs",
+      "b_host": "linux-intel-ubuntu",
+      "start": "2026-03-30",
+      "end": "2026-04-06"
+    },
+    {
+      "days": 6,
+      "a": "e493c2fd",
+      "a_proj": "rust-gpu",
+      "a_host": "arm-mac-ubuntu",
+      "b": "e80de831",
+      "b_proj": "rust-gpu",
+      "b_host": "linux-intel-ubuntu",
+      "start": "2026-04-16",
+      "end": "2026-04-21"
+    },
+    {
+      "days": 5,
+      "a": "fd509bb7",
+      "a_proj": "rust-gpu",
+      "a_host": "linux-intel-ubuntu",
+      "b": "a910ecaa",
+      "b_proj": "rust-gpu",
+      "b_host": "arm-mac-ubuntu",
+      "start": "2026-05-04",
+      "end": "2026-05-08"
+    },
+    {
+      "days": 5,
+      "a": "e493c2fd",
+      "a_proj": "rust-gpu",
+      "a_host": "arm-mac-ubuntu",
+      "b": "b74f64ed",
+      "b_proj": "rust-gpu",
+      "b_host": "linux-intel-ubuntu",
+      "start": "2026-04-12",
+      "end": "2026-04-16"
+    },
+    {
+      "days": 2,
+      "a": "e493c2fd",
+      "a_proj": "rust-gpu",
+      "a_host": "arm-mac-ubuntu",
+      "b": "da4896fe",
+      "b_proj": "rust-gpu",
+      "b_host": "linux-intel-ubuntu",
+      "start": "2026-04-23",
+      "end": "2026-04-24"
+    },
+    {
+      "days": 2,
+      "a": "da4896fe",
+      "a_proj": "rust-gpu",
+      "a_host": "linux-intel-ubuntu",
+      "b": "a9eacbbc",
+      "b_proj": "rust-gpu",
+      "b_host": "linux-intel-ubuntu",
+      "start": "2026-04-28",
+      "end": "2026-04-29"
+    },
+    {
+      "days": 1,
+      "a": "e493c2fd",
+      "a_proj": "rust-gpu",
+      "a_host": "arm-mac-ubuntu",
+      "b": "daf9f59c",
+      "b_proj": "rust-gpu",
+      "b_host": "linux-intel-ubuntu",
+      "start": "2026-04-09",
+      "end": "2026-04-09"
+    }
+  ]
 }

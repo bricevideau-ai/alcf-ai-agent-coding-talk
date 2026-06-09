@@ -162,7 +162,7 @@ def add(layout_idx):
 # --- 1. Title -------------------------------------------------------------
 s = add(0)
 set_text(get_ph(s, 0), "From Directing to Dialogue: Fifteen Weeks of AI Agent Coding for Performance Engineering")
-set_text(get_ph(s, 1), "Two projects · 7 sessions · ~1,500 prompts")
+set_text(get_ph(s, 1), "17 sessions · 2,650 prompts · 15 weeks")
 set_text(get_ph(s, 17), "Brice Videau")
 set_text(get_ph(s, 18), "Argonne Leadership Computing Facility\nArgonne National Laboratory\nJune 2026")
 # Remove the empty image placeholder and unused presenter slots
@@ -232,8 +232,8 @@ set_bullets(get_ph(s, 14), [
     "Autotuning configuration-space library",
     "C99, ~52K LOC, Python + Ruby bindings",
     "I wrote it and maintain it — high expertise",
-    "Feb 25 → Apr 7 (~6 weeks, 3 sessions)",
-    "530 user prompts, 99 PRs (96 merged)",
+    "Feb 25 → Apr 7 (~6 weeks, 4 sessions across both laptops)",
+    "600 user prompts, 99 PRs (96 merged)",
     "Mode: direct, correct, ship",
 ])
 set_text(get_ph(s, 17), "rust-gpu + claspr")
@@ -241,29 +241,40 @@ set_bullets(get_ph(s, 15), [
     "OpenCL Kernel target for rust-gpu; claspr single-source layer on top",
     "Rust + SPIR-V; ~142K + ~81K LOC",
     "Not a Rust dev; not a SPIR-V expert",
-    "Mar 27 → Jun 8 (~10 weeks, 4 sessions)",
-    "964 user prompts, 24,540-line PR + greenfield repo",
+    "Mar 27 → Jun 8 (~10 weeks, 13 sessions across both laptops)",
+    "2,059 user prompts, 24,540-line PR + greenfield repo",
     "Mode: explore, dialogue, decide, ship",
 ])
 
 # --- 6. Session chronology ------------------------------------------------
-# Visualising session timespans makes the parallelism visible: CCS s3 and
-# rust-gpu s1 both ran Mar 27 → Apr 7.
+# 17 sessions across two laptops; max parallelism is a 26-day overlap on
+# rust-gpu (May 14 → Jun 8, afa1ce4c on Linux while 11e6e374 ran on the Mac).
 s = add(3)  # Title, Subtitle and Bullets — gives a tall body for the timeline
 set_text(get_ph(s, 0), "Session chronology")
-set_text(get_ph(s, 13), "7 sessions over 15 weeks; an 11-day stretch in parallel")
+set_text(get_ph(s, 13), "17 sessions across two laptops; up to 26 days running in parallel")
 set_code(get_ph(s, 14),
-"""                  Feb 25   Mar 09   Mar 27   Apr 07   Apr 24   May 04   May 13   Jun 08
-CCS  s1  3f086a62 [========]
-CCS  s2  add0d69f          [============]
-CCS  s3  ca6a2dde                   [=========]
-rgpu s1  dd63080c                   [=========]    ← parallel with CCS s3 (Mar 27 → Apr 7)
-rgpu s2  e493c2fd                             [=============]
-rgpu s3  a910ecaa                                                   [=======]   *
-rgpu s4  11e6e374                                                            [========================]   *
+"""                       Feb 25  Mar 09  Mar 27  Apr 07  Apr 24  May 04  May 13  Jun 08
+Mac    CCS  3f086a62   [=======]
+Mac    CCS  add0d69f          [===========]
+Mac    CCS  ca6a2dde                  [========]
+Mac    rgpu dd63080c                  [========]
+Linux  CCS  d1bcaa09                     [=====]
+Mac    rgpu e493c2fd                          [============]
+Linux  rgpu daf9f59c                            |
+Linux  rgpu b74f64ed                              [===]
+Linux  rgpu e80de831                                 [===]
+Linux  rgpu da4896fe                                    [====]
+Linux  rgpu a9eacbbc                                       [=]
+Linux  rgpu fd509bb7                                        [========]
+Mac    rgpu a910ecaa  *                                       [======]
+Linux  rgpu 4862cd6d  *                                          |
+Mac    rgpu 11e6e374  *                                             [========================]
+Linux  rgpu 61dc0523  *                                              |
+Linux  rgpu afa1ce4c  *                                              [=======================]
 
-  [ ] = active session     * = full JSONL still on disk (others: only history.jsonl prompts survive 30-day eviction)
-""", size=10)
+  [ ]/| = active session     * = full JSONL on disk (others: history.jsonl prompts survive 30-day eviction)
+  Max overlap: 26d on rust-gpu (afa1ce4c Linux  /  11e6e374 Mac, May 14 → Jun 8)
+""", size=7)
 
 # --- 7. Section break: CCS ------------------------------------------------
 s = add(2)
@@ -445,10 +456,9 @@ fn main() -> claspr::Result<()> {
 set_text(get_ph(s, 17), "What the macros + chain do")
 set_bullets(get_ph(s, 15), [
     "#[claspr::device] mod gpu: lifted into its own SPIR-V crate at build time",
-    "#[claspr::kernel]: marks entry point; emits the typed launch wrapper",
-    ".write(&h).wait(&ctx)?: Tier 1 op + terminal wait — Tier 2 chains replace .wait with .and_then(...)",
-    "Same file compiled twice: host (cargo) and SPIR-V (rust-gpu via build.rs)",
-    "Typed launch — wrong arg type fails to compile",
+    "#[claspr::kernel]: marks entry point; emits typed launch wrapper",
+    ".write(&h).wait(&ctx)?: Tier 1 op + terminal wait; Tier 2 chains use .and_then(...)",
+    "Same file built twice: host (cargo) + SPIR-V (rust-gpu via build.rs)",
 ])
 
 # --- 18. Knowledge-gap shift (4-block) ------------------------------------
@@ -558,43 +568,43 @@ set_text(get_ph(s, 0), "Cross-cutting analysis\nWhat the data shows across both 
 # --- 25. Tool-call distribution -------------------------------------------
 s = add(5)
 set_text(get_ph(s, 0), "Tool-call distribution")
-set_text(get_ph(s, 13), "From the two locally-available rust-gpu sessions")
+set_text(get_ph(s, 13), "From the 5 locally-available rust-gpu sessions (~12,000 calls)")
 set_text(get_ph(s, 16), "Top tools by call count")
 set_bullets(get_ph(s, 14), [
-    "Bash         4,431   ~60%",
-    "Edit         1,758   ~24%",
-    "Read           883   ~12%",
-    "TaskUpdate     429   (todo tracking)",
-    "Write          352   (new files)",
-    "Grep, Glob, MultiEdit: long tail",
+    "Bash         6,357   ~53%",
+    "Edit         2,291   ~19%",
+    "Read         1,342   ~11%",
+    "TaskUpdate     636   (todo tracking)",
+    "Write          548   (new files)",
+    "TaskCreate, Monitor, Agent, WebFetch: long tail",
 ])
 set_text(get_ph(s, 17), "What this means")
 set_bullets(get_ph(s, 15), [
     "Bash dominates — agent lives in the shell, not just the editor",
-    "~2 Edits per Read — agent reads a chunk, then makes several small targeted changes within it",
-    "TaskUpdate non-trivial — todo lists are load-bearing UX",
+    "~1.7 Edits per Read — agent reads a chunk, then makes several small targeted changes within it",
+    "TaskUpdate + TaskCreate ~8% — todo lists are load-bearing UX",
     "Write small — most output goes into existing files",
 ])
 
 # --- 26. Sub-agent adoption curve -----------------------------------------
 s = add(5)
 set_text(get_ph(s, 0), "Sub-agent adoption curve")
-set_text(get_ph(s, 13), "Late adoption, then sudden; specialized agents won")
-set_text(get_ph(s, 16), "By session (rust-gpu)")
+set_text(get_ph(s, 13), "Adoption is workflow-driven, not just model-driven")
+set_text(get_ph(s, 16), "By surviving session (rust-gpu)")
 set_bullets(get_ph(s, 14), [
-    "Session 1 (Mar–Apr): 0 sub-agents",
-    "Session 2 (Apr):      0 sub-agents",
-    "Session 3 (May):      0 sub-agents",
-    "Session 4 (May–Jun): 24 sub-agents",
-    "Mix: 16 Explore, 7 general, 1 Plan",
+    "Mac    a910ecaa (May 4–13):   0",
+    "Linux  4862cd6d (May 11):      0",
+    "Linux  61dc0523 (May 14):      0",
+    "Mac    11e6e374 (May 13–Jun 8):  24",
+    "Linux  afa1ce4c (May 14–Jun 8):  1",
+    "Same engineer, same model, 26 parallel days: 24×",
 ])
-set_text(get_ph(s, 17), "Representative agent labels")
+set_text(get_ph(s, 17), "What this means")
 set_bullets(get_ph(s, 15), [
-    "Explore: Map current claspr public API",
-    "Explore: Audit spike scenarios vs original intent",
-    "Explore: Tier1/Tier2 abstraction-parity audit",
-    "Plan: Design + risks for async and_then_host",
-    "general: SYCL 2020 runtime API study (research)",
+    "Model era enables sub-agents; workflow choice gates use",
+    "Mac: design-dialogue on claspr — Explore fan-out paid off",
+    "Linux: capability-audit + spec deep-dives — fewer branches to map",
+    "Caveat: 30-day eviction hides Mar–Apr sessions",
 ])
 
 # --- 27. Model progression ------------------------------------------------
@@ -622,15 +632,15 @@ set_bullets(get_ph(s, 15), [
 # --- 28. Token economics (4-block) ----------------------------------------
 s = add(9)
 set_text(get_ph(s, 0), "Token economics")
-set_text(get_ph(s, 13), "ccusage covers 47% of prompts directly; the rest is projection")
-set_block(get_ph(s, 16), "Measured (May–Jun)",
-    "$2,505 across 2 surviving rust-gpu sessions / 707 prompts. ≈ $3.54/prompt at long-dialogue rates.")
+set_text(get_ph(s, 13), "ccusage covers 36% of prompts directly; the rest is projection")
+set_block(get_ph(s, 16), "Measured (May–Jun, both laptops)",
+    "$3,474 across 5 surviving rust-gpu sessions / 963 prompts. ≈ $3.61/prompt at long-dialogue rates.")
 set_block(get_ph(s, 17), "Projected total",
-    "Scaling to all 1,494 prompts: ≈ $4.5–5.5 K for the full 15 weeks. CCS prompts were terser, likely cheaper per turn.")
+    "Scaling to all 2,659 prompts: ≈ $8.6–9.6 K for the full 15 weeks. CCS prompts were terser, likely cheaper per turn.")
 set_block(get_ph(s, 18), "April cache bug",
     "An April Claude Code caching bug inflated the early-rust-gpu sessions; magnitude lost with evicted JSONLs. Treat projection as a floor.")
 set_block(get_ph(s, 19), "Volume (visible portion)",
-    "3.5 B cache reads vs 102 M cache writes vs 141 K raw input vs 6.1 M output. Cache is the workhorse.")
+    "9.5 B cache reads vs 334 M cache writes vs 431 K raw input vs 18.7 M output. Cache is the workhorse.")
 
 # --- 29. Memory system ----------------------------------------------------
 s = add(6)
