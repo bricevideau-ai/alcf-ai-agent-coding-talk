@@ -464,13 +464,12 @@ mod gpu {
 }
 
 let kernels = gpu::kernels(&ctx)?;
-let h: Vec<u32> = (1..=N as u32).collect();
+let mut h: Vec<u32> = (1..=N as u32).collect();
 let d = DeviceSlice::from_slice(&ctx, &h)?;
 let d = kernels.collatz_kernel([N], d).wait(&ctx)?;
-let mut out = vec![0u32; N];
-d.read(&mut out).wait(&ctx)?;
+d.read(&mut h).wait(&ctx)?;
 // Validate device output against the SAME function on the host.
-assert!(h.iter().zip(&out).all(|(&i, &n)|
+assert!((1..=N as u32).zip(&h).all(|(i, &n)|
     n == gpu::collatz(i).unwrap_or(u32::MAX)));
 """)
 set_text(get_ph(s, 17), "Why this matters")
